@@ -11,6 +11,7 @@ import PlayerProxy from "./helpers/shell/PlayerProxy.js";
 import { debugLog, enumValueByIndex, errorLog, handleError } from "./utils/common.js";
 import { getAppByIdAndEntry, createDbusProxy } from "./utils/shell_only.js";
 import { StdInterface } from "./types/dbus.js";
+// import { Service } from "./helpers/shell/LyricProxy.js";
 import { KeysOf } from "./types/misc.js";
 import {
     PlaybackStatus,
@@ -22,9 +23,13 @@ import {
     MPRIS_IFACE_NAME,
     DBUS_OBJECT_PATH,
     DBUS_IFACE_NAME,
+    LYRIC_IFACE_NAME,
     ExtensionPositions,
     MouseActions,
+    // interfaceXml,
+    LYRIC_OBJECT_PATH,
 } from "./types/enums/common.js";
+// import LyricProxy from "./helpers/shell/LyricProxy.js";
 
 Gio._promisify(Gio.File.prototype, "load_contents_async", "load_contents_finish");
 
@@ -63,12 +68,16 @@ export default class MediaControls extends Extension {
     private panelBtn: InstanceType<typeof PanelButton>;
 
     private watchProxy: StdInterface;
-    private playerProxies: Map<string, PlayerProxy>;
+    // private lyricProxy: LyricProxy;
+    private playerProxies: Map<string, [PlayerProxy, unknown]>;
+    private chosenBusName: string;
 
     private watchIfaceInfo: Gio.DBusInterfaceInfo;
     private mprisIfaceInfo: Gio.DBusInterfaceInfo;
     private mprisPlayerIfaceInfo: Gio.DBusInterfaceInfo;
     private propertiesIfaceInfo: Gio.DBusInterfaceInfo;
+    private lyricIfaceInfo: Gio.DBusInterfaceInfo;
+    private ownerId: number
 
     private mediaSectionAddFunc: (busName: string) => void;
 
@@ -101,7 +110,10 @@ export default class MediaControls extends Extension {
         this.mprisPlayerIfaceInfo = null;
         this.propertiesIfaceInfo = null;
         this.watchProxy = null;
+        this.lyricIfaceInfo = null;
+        // this.lyricProxy = null;
 
+        Gio.bus_unown_name(this.ownerId);
         this.removePanelButton();
         this.updateMediaNotificationVisiblity(true);
 
@@ -111,10 +123,10 @@ export default class MediaControls extends Extension {
     }
 
     public getPlayers() {
-        const players: PlayerProxy[] = [];
+        const players: [PlayerProxy, unknown][] = [];
 
         for (const player of this.playerProxies.values()) {
-            if (player.isInvalid) {
+            if (player[0].isInvalid) {
                 continue;
             }
 
@@ -273,8 +285,8 @@ export default class MediaControls extends Extension {
             this.blacklistedPlayers = this.settings.get_strv("blacklisted-players");
 
             for (const playerProxy of this.playerProxies.values()) {
-                if (this.isPlayerBlacklisted(playerProxy.identity, playerProxy.desktopEntry)) {
-                    this.removePlayer(playerProxy.busName);
+                if (this.isPlayerBlacklisted(playerProxy[0].identity, playerProxy[0].desktopEntry)) {
+                    this.removePlayer(playerProxy[0].busName);
                 }
             }
 
@@ -285,11 +297,13 @@ export default class MediaControls extends Extension {
     private async initProxies() {
         const mprisXmlFile = Gio.File.new_for_path(`${this.path}/dbus/mprisNode.xml`);
         const watchXmlFile = Gio.File.new_for_path(`${this.path}/dbus/watchNode.xml`);
+        const lyricXmlFile = Gio.File.new_for_path(`${this.path}/dbus/lyricNode.xml`);
 
         const mprisResult = mprisXmlFile.load_contents_async(null);
         const watchResult = watchXmlFile.load_contents_async(null);
+        const lyricResult = lyricXmlFile.load_contents_async(null);
 
-        const readResults = await Promise.all([mprisResult, watchResult]).catch(handleError);
+        const readResults = await Promise.all([mprisResult, watchResult, lyricResult]).catch(handleError);
 
         if (readResults == null) {
             errorLog("Failed to read xml files");
@@ -298,16 +312,23 @@ export default class MediaControls extends Extension {
 
         const mprisBytes = readResults[0];
         const watchBytes = readResults[1];
+        const lyricBytes = readResults[2];
 
         const textDecoder = new TextDecoder();
 
         const watchNodeXml = textDecoder.decode(watchBytes[0]);
         const mprisNodeXml = textDecoder.decode(mprisBytes[0]);
+        const lyricNodeXml = textDecoder.decode(lyricBytes[0]);
 
         const watchNodeInfo = Gio.DBusNodeInfo.new_for_xml(watchNodeXml);
         const watchInterface = watchNodeInfo.interfaces.find((iface) => iface.name === DBUS_IFACE_NAME);
-
         this.watchIfaceInfo = watchInterface;
+
+        const lyricNodeInfo = Gio.DBusNodeInfo.new_for_xml(lyricNodeXml);
+        const lyricInterface = lyricNodeInfo.interfaces.find((iface) => iface.name === LYRIC_IFACE_NAME);
+        const lyricIfaceInfoString = new GLib.String("");
+        lyricInterface.generate_xml(4, lyricIfaceInfoString);
+        this.lyricIfaceInfo = lyricInterface;
 
         const mprisNodeInfo = Gio.DBusNodeInfo.new_for_xml(mprisNodeXml);
         const mprisInterface = mprisNodeInfo.interfaces.find((iface) => iface.name === MPRIS_IFACE_NAME);
@@ -333,8 +354,8 @@ export default class MediaControls extends Extension {
             errorLog("Failed to init watch proxy");
             return;
         }
-
         await this.addRunningPlayers();
+        await this.createLyricProxy().catch(handleError);
     }
 
     private async initWatchProxy() {
@@ -361,6 +382,37 @@ export default class MediaControls extends Extension {
         });
 
         return true;
+    }
+
+    private async createLyricProxy() {
+        this.ownerId = Gio.bus_own_name(
+            Gio.BusType.SESSION,
+            LYRIC_IFACE_NAME,
+            Gio.BusNameOwnerFlags.NONE,
+            (connect: Gio.DBusConnection) => {
+                connect.register_object(
+                    LYRIC_OBJECT_PATH,
+                    this.lyricIfaceInfo,
+                    this.onNameAcquired.bind(this),
+                    null,
+                    null
+                )
+            },
+            null,
+            null
+        );
+    }
+
+    private onNameAcquired(connection, sender, object_path, interface_name, method_name, parameters, invocation) {
+        if (method_name === "UpdateLyric") {
+            const current_lyric = parameters.unpack()[0];
+            const lrc = JSON.parse(current_lyric.get_string()[0]);
+            if (this.chosenBusName?.includes(lrc.sender)) {
+                this.panelBtn?.updateLyric(lrc);
+                invocation.return_value(null);
+            }
+            invocation.return_value(null);
+        }
     }
 
     private async addRunningPlayers() {
@@ -410,7 +462,7 @@ export default class MediaControls extends Extension {
                 this.panelBtn?.updateWidgets(WidgetFlags.MENU_PLAYERS);
             });
 
-            this.playerProxies.set(busName, playerProxy);
+            this.playerProxies.set(busName, [playerProxy, undefined]);
             this.panelBtn?.updateWidgets(WidgetFlags.MENU_PLAYERS);
             this.setActivePlayer();
         } catch (e) {
@@ -420,7 +472,7 @@ export default class MediaControls extends Extension {
 
     private removePlayer(busName: string) {
         debugLog("Removing player:", busName);
-        this.playerProxies.get(busName)?.onDestroy();
+        this.playerProxies.get(busName)[0]?.onDestroy();
         this.playerProxies.delete(busName);
         this.panelBtn?.updateWidgets(WidgetFlags.MENU_PLAYERS);
         this.setActivePlayer();
@@ -435,39 +487,43 @@ export default class MediaControls extends Extension {
             return;
         }
 
-        let chosenPlayer: PlayerProxy = null;
+        let chosenPlayer: [PlayerProxy, unknown] = null;
 
         for (const [, playerProxy] of this.playerProxies) {
-            if (playerProxy.isInvalid) {
+            if (playerProxy[0].isInvalid) {
                 continue;
             }
 
-            if (playerProxy.isPlayerPinned()) {
+            if (playerProxy[0].isPlayerPinned()) {
                 chosenPlayer = playerProxy;
+                this.chosenBusName = playerProxy[0].busName;
                 break;
             }
 
             if (chosenPlayer == null) {
                 chosenPlayer = playerProxy;
+                this.chosenBusName = playerProxy[0].busName;
                 continue;
             }
 
-            if (chosenPlayer?.playbackStatus !== PlaybackStatus.PLAYING) {
-                if (playerProxy.playbackStatus === PlaybackStatus.PLAYING) {
+            if (chosenPlayer && chosenPlayer[0]?.playbackStatus !== PlaybackStatus.PLAYING) {
+                if (playerProxy[0].playbackStatus === PlaybackStatus.PLAYING) {
                     chosenPlayer = playerProxy;
-                } else if (this.panelBtn?.isSamePlayer(playerProxy)) {
+                    this.chosenBusName = playerProxy[0].busName;
+                } else if (this.panelBtn?.isSamePlayer(playerProxy[0])) {
                     chosenPlayer = playerProxy;
+                    this.chosenBusName = playerProxy[0].busName;
                 }
             }
         }
 
-        debugLog("Chosen player:", chosenPlayer?.busName);
+        debugLog("Chosen player:", chosenPlayer[0]?.busName);
 
         if (chosenPlayer == null) {
             this.removePanelButton();
         } else {
             if (this.panelBtn == null) {
-                this.addPanelButton(chosenPlayer.busName);
+                this.addPanelButton(chosenPlayer[0].busName);
             } else {
                 this.panelBtn.updateProxy(chosenPlayer);
             }

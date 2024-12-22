@@ -4,7 +4,11 @@ import Pango from "gi://Pango";
 import St from "gi://St";
 
 export interface ScrollingLabelParams {
-    text: string;
+    text: {
+        content: string;
+        time: number;
+        sender: unknown;
+    };
     width: number;
     direction?: Clutter.TimelineDirection;
     isFixedWidth?: boolean;
@@ -28,6 +32,7 @@ class ScrollingLabel extends St.ScrollView {
     private direction: Clutter.TimelineDirection;
 
     private transition: Clutter.PropertyTransition;
+    private lyricTime: number;
 
     constructor(params: ScrollingLabelParams) {
         super({
@@ -56,8 +61,10 @@ class ScrollingLabel extends St.ScrollView {
             yExpand: true,
         });
 
+        this.lyricTime = text.time;
+
         this.label = new St.Label({
-            text,
+            text: text.content,
             yAlign: Clutter.ActorAlign.CENTER,
             xAlign: Clutter.ActorAlign.START,
         });
@@ -91,42 +98,45 @@ class ScrollingLabel extends St.ScrollView {
             this.onAdjustmentChanged.bind(this, adjustment, origText),
         );
 
-        this.label.text = `${origText} `;
+        this.label.text = `${origText}`;
         this.label.clutterText.ellipsize = Pango.EllipsizeMode.NONE;
     }
 
     private onAdjustmentChanged(adjustment: St.Adjustment, origText: string) {
-        if (adjustment.upper <= adjustment.pageSize) {
-            return;
-        }
+        if (adjustment.upper <= adjustment.pageSize) return;
 
-        const initial = adjustment.value;
-        const final = adjustment.upper;
-        const duration = adjustment.upper / SCROLL_ANIMATION_SPEED;
+        const staticTime = this.labelWidth / this.label.width * this.lyricTime * 1000 * 0.6;
 
-        const pspec = adjustment.find_property("value");
-        const interval = new Clutter.Interval({
-            valueType: pspec.value_type,
-            initial,
-            final,
-        });
+        setTimeout(() => {
+            const initial = adjustment.value;
+            const final = adjustment.upper;
+            const duration = (this.lyricTime * 1000 - staticTime) || (adjustment.upper / SCROLL_ANIMATION_SPEED);
 
-        this.transition = new Clutter.PropertyTransition({
-            propertyName: "value",
-            progressMode: Clutter.AnimationMode.LINEAR,
-            direction: this.direction,
-            repeatCount: -1,
-            duration,
-            interval,
-        });
+            const pspec = adjustment.find_property("value");
+            const interval = new Clutter.Interval({
+                valueType: pspec.value_type,
+                initial,
+                final,
+            });
 
-        this.label.text = `${origText} ${origText}`;
-        adjustment.add_transition("scroll", this.transition);
-        adjustment.disconnect(this.onAdjustmentChangedId);
+            this.transition = new Clutter.PropertyTransition({
+                propertyName: "value",
+                progressMode: Clutter.AnimationMode.LINEAR,
+                direction: this.direction,
+                repeatCount: staticTime ? 0 : -1,
+                duration,
+                interval,
+            });
 
-        if (this.initPaused) {
-            this.transition.pause();
-        }
+            // this.label.text = staticTime ? origText : `${origText} ${origText}`;
+            this.label.text = origText;
+            adjustment.add_transition("scroll", this.transition);
+            adjustment.disconnect(this.onAdjustmentChangedId);
+
+            if (this.initPaused) {
+                this.transition.pause();
+            }
+        }, staticTime);
     }
 
     private onShowChanged() {

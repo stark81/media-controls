@@ -1,0 +1,13 @@
+<!DOCTYPE node PUBLIC "-//freedesktop//DTD D-BUS Object Introspection 1.0//EN"
+"http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
+<node>
+  <interface name="org.gnome.Shell.TrayLyric">
+    <method name="LikeThisTrack">
+      <arg type="b" name="liked"/>
+    </method>
+    <method name="UpdateLyric">
+      <arg type="s" name="current_lyric"/>
+    </method>
+    <signal name="UpdateLikedStatus"></signal>
+  </interface>
+</node>

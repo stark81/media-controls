@@ -11,7 +11,7 @@ import { gettext as _ } from "resource:///org/gnome/shell/extensions/extension.j
 
 import MediaControls from "../../extension.js";
 import PlayerProxy from "./PlayerProxy.js";
-import ScrollingLabel from "./ScrollingLabel.js";
+import ScrollingLabel, { ScrollingLabelParams } from "./ScrollingLabel.js";
 import MenuSlider from "./MenuSlider.js";
 import { KeysOf } from "../../types/misc.js";
 import { debugLog, handleError } from "../../utils/common.js";
@@ -70,11 +70,13 @@ class PanelButton extends PanelMenu.Button {
 
     private doubleTapSourceId: number;
     private changeListenerIds: Map<KeysOf<PlayerProxyProperties>, number>;
+    private lyricObj: unknown;
 
-    constructor(playerProxy: PlayerProxy, extension: MediaControls) {
+    constructor(playerProxyArray: [PlayerProxy, unknown], extension: MediaControls) {
         super(0.5, "Media Controls", false);
 
-        this.playerProxy = playerProxy;
+        this.playerProxy = playerProxyArray[0];
+        this.lyricObj = playerProxyArray[1]
         this.extension = extension;
         this.changeListenerIds = new Map();
 
@@ -86,13 +88,19 @@ class PanelButton extends PanelMenu.Button {
         this.connect("destroy", this.onDestroy.bind(this));
     }
 
-    public updateProxy(playerProxy: PlayerProxy) {
-        if (this.isSamePlayer(playerProxy) === false) {
-            debugLog(`Updating proxy to ${playerProxy.busName}`);
-            this.playerProxy = playerProxy;
+    public updateProxy(playerProxyArray: [PlayerProxy, unknown]) {
+        if (this.isSamePlayer(playerProxyArray[0]) === false) {
+            debugLog(`Updating proxy to ${playerProxyArray[0].busName}`);
+            this.playerProxy = playerProxyArray[0];
+            this.lyricObj = playerProxyArray[1];
             this.updateWidgets(WidgetFlags.ALL);
             this.addProxyListeners();
         }
+    }
+
+    public updateLyric(lyricObj: unknown) {
+        this.lyricObj = lyricObj;
+        this.updateWidgets(WidgetFlags.PANEL_LABEL);
     }
 
     public isSamePlayer(playerProxy: PlayerProxy) {
@@ -265,10 +273,10 @@ class PanelButton extends PanelMenu.Button {
         for (let i = 0; i < players.length; i++) {
             const player = players[i];
 
-            const app = getAppByIdAndEntry(player.identity, player.desktopEntry);
-            const isSamePlayer = this.isSamePlayer(player);
+            const app = getAppByIdAndEntry(player[0].identity, player[0].desktopEntry);
+            const isSamePlayer = this.isSamePlayer(player[0]);
 
-            const appName = app?.get_name() ?? (player.identity || _("Unknown player"));
+            const appName = app?.get_name() ?? (player[0].identity || _("Unknown player"));
             const appIcon = app?.get_icon() ?? Gio.Icon.new_for_string("audio-x-generic-symbolic");
 
             if (isSamePlayer) {
@@ -438,7 +446,11 @@ class PanelButton extends PanelMenu.Button {
         const width = this.extension.labelWidth > 0 ? this.getMenuItemWidth() : 0;
 
         this.menuLabelTitle = new ScrollingLabel({
-            text: this.playerProxy.metadata["xesam:title"],
+            text: {
+                content: this.playerProxy.metadata["xesam:title"],
+                time: 0,
+                sender: null
+            },
             isScrolling: this.extension.scrollLabels,
             initPaused: this.playerProxy.playbackStatus !== PlaybackStatus.PLAYING,
             width,
@@ -448,7 +460,11 @@ class PanelButton extends PanelMenu.Button {
         const albumText = this.playerProxy.metadata["xesam:album"] || "";
 
         this.menuLabelSubtitle = new ScrollingLabel({
-            text: albumText === "" ? artistText : `${artistText} / ${albumText}`,
+            text: {
+                content: albumText === "" ? artistText : `${artistText} / ${albumText}`,
+                time: 0,
+                sender: null
+            },
             isScrolling: this.extension.scrollLabels,
             initPaused: this.playerProxy.playbackStatus !== PlaybackStatus.PLAYING,
             direction: Clutter.TimelineDirection.BACKWARD,
@@ -613,8 +629,17 @@ class PanelButton extends PanelMenu.Button {
     }
 
     private addButtonLabel(index: number) {
+        let labelObj = this.lyricObj as ScrollingLabelParams["text"];
+        if (!labelObj) {
+            labelObj = {
+                content: `${this.getButtonLabelText()} ${this.getButtonLabelText()}`,
+                time: 0,
+                sender: null,
+            }
+        }
+
         const label = new ScrollingLabel({
-            text: this.getButtonLabelText(),
+            text: labelObj,
             width: this.extension.labelWidth,
             isFixedWidth: this.extension.isFixedLabelWidth,
             isScrolling: this.extension.scrollLabels,

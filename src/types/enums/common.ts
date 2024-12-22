@@ -6,6 +6,8 @@ export const DBUS_OBJECT_PATH = "/org/freedesktop/DBus";
 export const MPRIS_IFACE_NAME = "org.mpris.MediaPlayer2";
 export const DBUS_PROPERTIES_IFACE_NAME = "org.freedesktop.DBus.Properties";
 export const MPRIS_PLAYER_IFACE_NAME = "org.mpris.MediaPlayer2.Player";
+export const LYRIC_IFACE_NAME = "org.gnome.Shell.TrayLyric";
+export const LYRIC_OBJECT_PATH = "/org/gnome/Shell/TrayLyric";
 
 export const PlaybackStatus = {
     PLAYING: "Playing",
@@ -88,3 +90,16 @@ export type MouseActions = Enum<typeof MouseActions>;
 export type LoopStatus = Enum<typeof LoopStatus>;
 export type PlaybackStatus = Enum<typeof PlaybackStatus>;
 export type WidgetFlags = Enum<typeof WidgetFlags>;
+
+export const interfaceXml = `
+<node>
+  <interface name="org.gnome.Shell.TrayLyric">
+    <method name="LikeThisTrack">
+      <arg type="b" name="liked"/>
+    </method>
+    <method name="UpdateLyric">
+      <arg type="s" name="current_lyric"/>
+    </method>
+    <signal name="UpdateLikedStatus"></signal>
+  </interface>
+</node>`;
