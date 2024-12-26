@@ -300,7 +300,7 @@ export default class MediaControlsPreferences extends ExtensionPreferences {
     }
 
     private async clearCache() {
-        const cacheDir = GLib.build_pathv("/", [GLib.get_user_cache_dir(), "mediacontrols@cliffniff.github.com"]);
+        const cacheDir = GLib.build_pathv("/", [GLib.get_user_cache_dir(), "mediacontrols@stark81.github.com"]);
 
         if (GLib.file_test(cacheDir, GLib.FileTest.EXISTS)) {
             const folder = Gio.File.new_for_path(cacheDir);
@@ -315,7 +315,7 @@ export default class MediaControlsPreferences extends ExtensionPreferences {
     }
 
     private async getCacheSize() {
-        const cacheDir = GLib.build_pathv("/", [GLib.get_user_cache_dir(), "mediacontrols@cliffniff.github.com"]);
+        const cacheDir = GLib.build_pathv("/", [GLib.get_user_cache_dir(), "mediacontrols@stark81.github.com"]);
 
         if (GLib.file_test(cacheDir, GLib.FileTest.EXISTS)) {
             const folder = Gio.File.new_for_path(cacheDir);

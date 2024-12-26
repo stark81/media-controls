@@ -1,3 +1,6 @@
+## Note
+ This is a fork of [media-control](https://github.com/sakithb/media-controls) by @sakithb, with the purpose of adding a feature to display the current player's lyric information.
+
 ## What does this extension do?
 
 Show controls and information of the currently playing media in the panel.
@@ -10,28 +13,34 @@ Show controls and information of the currently playing media in the panel.
 - Popup with album art and a slider to control the playback
 - Scrolling animations
 - Blacklist players
-- 使用dbus服务，接收当前播放器的歌词信息并显示；
-
----
-
-# 如何让自己的播放器接入歌词dbus服务？
- - busName = "org.gnome.Shell.TrayLyric"
- - objectPath = "/org/gnome/Shell/TrayLyric"
- - interfaceName = "org.gnome.Shell.TrayLyric"
-
-## 服务方法
- - `UpdateLyric: (lrcObj: string) => void`: 调用dbus服务上的此方法，可将歌词信息显示在面板上；
- - 说明：参数是一个json字符串，格式如下：
-    ```json
-    {
-        "content": "歌词内容",
-        "time": "数字类型，表示歌词时长，单位为秒。用于控制歌词滚动的速度。",
-        "sender": "假如自己播放器的mpris的名称为： ‘org.mpris.MediaPlayer2.VutronMusic’，则此处的值为：‘VutronMusic’。"
-    }
-    ```
-  - 参考：自己的客户端可参考[VutronMusic](https://github.com/stark81/VutronMusic)项目 `/src/main/IPCs.ts`里createDBus方法 的实现；
+- Register a DBus service, receive lyric from clients, and show it
 
 
+# How to use the lyric service ?
+-  ## DBus information
+    - busName = "org.gnome.Shell.TrayLyric"
+    - objectPath = "/org/gnome/Shell/TrayLyric"
+    - interfaceName = "org.gnome.Shell.TrayLyric"
+
+    - `UpdateLyric: (lrcObj: string) => void`: 
+        - Parameter: lrcObj, a JSON string in the following format:
+          ```json
+          {
+            "content": "lyric",
+            // Current lyric.If set to "", it will display the media title.
+
+            "time": "4.5", 
+            // Numeric type, in seconds, used to control the speed and duration
+            // of the lyric scrolling.
+            
+            "sender": "VutronMusic" 
+            // Part of your mpris player's name. For exmaple,if the name of your
+            // mpris player is ‘org.mpris.MediaPlayer2.VutronMusic’， the sender 
+            // should set to 'VutronMusic', or 'MediaPlayer2' or any part of the
+            // name, but an inaccurate name may cause the player and the lyrics 
+            // to not match correctly.
+          }
+          ```
 ---
 ## How to install
 

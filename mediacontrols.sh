@@ -82,7 +82,7 @@ reload() {
 translations() {
   echo "Updating translations..."
 
-  touch assets/locale/mediacontrols@cliffniff.github.com.pot
+  touch assets/locale/mediacontrols@stark81.github.com.pot
 
   find . -type f -iname "*.blp" -o -iname "*.ts" -not -path "./node_modules/*" | xargs xgettext --from-code=UTF-8 \
     --add-comments \
@@ -90,11 +90,11 @@ translations() {
     --keyword=_ \
     --keyword=C_:1c,2 \
     --language=Javascript \
-    --output=assets/locale/mediacontrols@cliffniff.github.com.pot
+    --output=assets/locale/mediacontrols@stark81.github.com.pot
 
   for pofile in assets/locale/*.po; do
     echo "Updating: $pofile"
-    msgmerge -U "$pofile" "assets/locale/mediacontrols@cliffniff.github.com.pot"
+    msgmerge -U "$pofile" "assets/locale/mediacontrols@stark81.github.com.pot"
   done
 
   rm assets/locale/*.po~ 2>/dev/null
@@ -113,27 +113,27 @@ format() {
 
 install() {
   echo "Installing..."
-  gnome-extensions install --force ./dist/builds/mediacontrols@cliffniff.github.com.shell-extension.zip
+  gnome-extensions install --force ./dist/builds/mediacontrols@stark81.github.com.shell-extension.zip
 }
 
 uninstall() {
   echo "Uninstalling..."
-  gnome-extensions uninstall mediacontrols@cliffniff.github.com
+  gnome-extensions uninstall mediacontrols@stark81.github.com
 }
 
 enable() {
   echo "Enabling..."
-  gnome-extensions enable mediacontrols@cliffniff.github.com
+  gnome-extensions enable mediacontrols@stark81.github.com
 }
 
 disable() {
   echo "Disabling..."
-  gnome-extensions disable mediacontrols@cliffniff.github.com
+  gnome-extensions disable mediacontrols@stark81.github.com
 }
 
 prefs() {
   echo "Opening prefs..."
-  gnome-extensions prefs mediacontrols@cliffniff.github.com
+  gnome-extensions prefs mediacontrols@stark81.github.com
 }
 
 watch() {

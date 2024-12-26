@@ -1,10 +1,10 @@
 {
-  "uuid": "mediacontrols@cliffniff.github.com",
-  "name": "Media Controls",
+  "uuid": "mediacontrols@stark81.github.com",
+  "name": "Media Controls With Lyric",
   "description": "Show controls and information of the currently playing media in the panel.",
   "url": "https://github.com/stark81/media-controls",
   "settings-schema": "org.gnome.shell.extensions.mediacontrols",
-  "gettext-domain": "mediacontrols@cliffniff.github.com",
-  "version-name": "2.0.2",
+  "gettext-domain": "mediacontrols@stark81.github.com",
+  "version-name": "3.0.2",
   "shell-version": ["45", "46", "47"]
 }

@@ -630,9 +630,9 @@ class PanelButton extends PanelMenu.Button {
 
     private addButtonLabel(index: number) {
         let labelObj = this.lyricObj as ScrollingLabelParams["text"];
-        if (!labelObj) {
+        if (!labelObj || labelObj.content === "") {
             labelObj = {
-                content: `${this.getButtonLabelText()} ${this.getButtonLabelText()}`,
+                content: `${this.getButtonLabelText()}`,
                 time: 0,
                 sender: null,
             }

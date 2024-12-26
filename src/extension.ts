@@ -407,6 +407,10 @@ export default class MediaControls extends Extension {
         if (method_name === "UpdateLyric") {
             const current_lyric = parameters.unpack()[0];
             const lrc = JSON.parse(current_lyric.get_string()[0]);
+            if (lrc.content === "") {
+                this.panelBtn?.updateLyric(undefined);
+                invocation.return_value(null);
+            }
             if (this.chosenBusName?.includes(lrc.sender)) {
                 this.panelBtn?.updateLyric(lrc);
                 invocation.return_value(null);
