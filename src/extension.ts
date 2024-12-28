@@ -11,7 +11,6 @@ import PlayerProxy from "./helpers/shell/PlayerProxy.js";
 import { debugLog, enumValueByIndex, errorLog, handleError } from "./utils/common.js";
 import { getAppByIdAndEntry, createDbusProxy } from "./utils/shell_only.js";
 import { StdInterface } from "./types/dbus.js";
-// import { Service } from "./helpers/shell/LyricProxy.js";
 import { KeysOf } from "./types/misc.js";
 import {
     PlaybackStatus,
@@ -29,7 +28,6 @@ import {
     // interfaceXml,
     LYRIC_OBJECT_PATH,
 } from "./types/enums/common.js";
-// import LyricProxy from "./helpers/shell/LyricProxy.js";
 
 Gio._promisify(Gio.File.prototype, "load_contents_async", "load_contents_finish");
 
@@ -68,7 +66,6 @@ export default class MediaControls extends Extension {
     private panelBtn: InstanceType<typeof PanelButton>;
 
     private watchProxy: StdInterface;
-    // private lyricProxy: LyricProxy;
     private playerProxies: Map<string, [PlayerProxy, unknown]>;
     private chosenBusName: string;
 
@@ -111,7 +108,6 @@ export default class MediaControls extends Extension {
         this.propertiesIfaceInfo = null;
         this.watchProxy = null;
         this.lyricIfaceInfo = null;
-        // this.lyricProxy = null;
 
         Gio.bus_unown_name(this.ownerId);
         this.removePanelButton();

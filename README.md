@@ -44,9 +44,10 @@ Show controls and information of the currently playing media in the panel.
 ---
 ## How to install
 
-#### Install from extensions.gnome.org (Recommended)
+#### Install from extensions.gnome.org (Recommended)(not yet)
 
-[<img src="assets/images/ego.png" height="100">](https://extensions.gnome.org/extension/4470/media-controls/)
+<img src="assets/images/ego.png" height="100">
+<!-- (https://extensions.gnome.org/extension/4470/media-controls/) -->
 
 #### Manual installation
 
