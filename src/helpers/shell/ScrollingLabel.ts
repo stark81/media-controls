@@ -1,3 +1,4 @@
+import GLib from "gi://GLib";
 import Clutter from "gi://Clutter";
 import GObject from "gi://GObject";
 import Pango from "gi://Pango";
@@ -33,6 +34,7 @@ class ScrollingLabel extends St.ScrollView {
 
     private transition: Clutter.PropertyTransition;
     private lyricTime: number;
+    private timeout: number;
 
     constructor(params: ScrollingLabelParams) {
         super({
@@ -105,13 +107,12 @@ class ScrollingLabel extends St.ScrollView {
     private onAdjustmentChanged(adjustment: St.Adjustment, origText: string) {
         if (adjustment.upper <= adjustment.pageSize) return;
 
-        const staticTime = this.labelWidth / this.label.width * this.lyricTime * 1000 * 0.6;
+        const staticTime = (this.labelWidth / this.label.width) * this.lyricTime * 1000 * 0.6;
 
-        setTimeout(() => {
+        this.timeout = GLib.timeout_add(GLib.PRIORITY_DEFAULT, staticTime, () => {
             const initial = adjustment.value;
             const final = adjustment.upper;
-            const duration = (this.lyricTime * 1000 - staticTime) || (adjustment.upper / SCROLL_ANIMATION_SPEED);
-
+            const duration = this.lyricTime * 1000 - staticTime || adjustment.upper / SCROLL_ANIMATION_SPEED;
             const pspec = adjustment.find_property("value");
             const interval = new Clutter.Interval({
                 valueType: pspec.value_type,
@@ -131,12 +132,18 @@ class ScrollingLabel extends St.ScrollView {
             // this.label.text = staticTime ? origText : `${origText} ${origText}`;
             this.label.text = origText;
             adjustment.add_transition("scroll", this.transition);
+
+            GLib.source_remove(this.timeout);
+            this.timeout = null;
+
             adjustment.disconnect(this.onAdjustmentChangedId);
 
             if (this.initPaused) {
                 this.transition.pause();
             }
-        }, staticTime);
+
+            return GLib.SOURCE_REMOVE; // 停止定时器
+        });
     }
 
     private onShowChanged() {

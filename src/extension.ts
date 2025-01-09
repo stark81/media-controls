@@ -74,7 +74,7 @@ export default class MediaControls extends Extension {
     private mprisPlayerIfaceInfo: Gio.DBusInterfaceInfo;
     private propertiesIfaceInfo: Gio.DBusInterfaceInfo;
     private lyricIfaceInfo: Gio.DBusInterfaceInfo;
-    private ownerId: number
+    private ownerId: number;
 
     private mediaSectionAddFunc: (busName: string) => void;
 
@@ -350,6 +350,7 @@ export default class MediaControls extends Extension {
             errorLog("Failed to init watch proxy");
             return;
         }
+
         await this.addRunningPlayers();
         await this.createLyricProxy().catch(handleError);
     }
@@ -391,11 +392,11 @@ export default class MediaControls extends Extension {
                     this.lyricIfaceInfo,
                     this.onNameAcquired.bind(this),
                     null,
-                    null
-                )
+                    null,
+                );
             },
             null,
-            null
+            null,
         );
     }
 
@@ -403,14 +404,17 @@ export default class MediaControls extends Extension {
         if (method_name === "UpdateLyric") {
             const current_lyric = parameters.unpack()[0];
             const lrc = JSON.parse(current_lyric.get_string()[0]);
+
             if (lrc.content === "") {
                 this.panelBtn?.updateLyric(undefined);
                 invocation.return_value(null);
             }
+
             if (this.chosenBusName?.includes(lrc.sender)) {
                 this.panelBtn?.updateLyric(lrc);
                 invocation.return_value(null);
             }
+
             invocation.return_value(null);
         }
     }
@@ -438,6 +442,7 @@ export default class MediaControls extends Extension {
 
     private async addPlayer(busName: string) {
         debugLog("Adding player:", busName);
+
         try {
             const playerProxy = new PlayerProxy(busName);
             const initSuccess = await playerProxy
@@ -457,6 +462,7 @@ export default class MediaControls extends Extension {
 
             playerProxy.onChanged("IsPinned", this.setActivePlayer.bind(this));
             playerProxy.onChanged("PlaybackStatus", this.setActivePlayer.bind(this));
+
             playerProxy.onChanged("IsInvalid", () => {
                 this.setActivePlayer();
                 this.panelBtn?.updateWidgets(WidgetFlags.MENU_PLAYERS);
@@ -472,7 +478,7 @@ export default class MediaControls extends Extension {
 
     private removePlayer(busName: string) {
         debugLog("Removing player:", busName);
-        this.playerProxies.get(busName)[0]?.onDestroy();
+        this.playerProxies.get(busName)[0]?.destroy();
         this.playerProxies.delete(busName);
         this.panelBtn?.updateWidgets(WidgetFlags.MENU_PLAYERS);
         this.setActivePlayer();
@@ -549,6 +555,7 @@ export default class MediaControls extends Extension {
             Main.panel.statusArea.dateMenu._messageList._mediaSection._onProxyReady();
         } else {
             this.mediaSectionAddFunc = Mpris.MediaSection.prototype._addPlayer;
+
             Mpris.MediaSection.prototype._addPlayer = function () {};
 
             if (Main.panel.statusArea.dateMenu._messageList._mediaSection._players != null) {

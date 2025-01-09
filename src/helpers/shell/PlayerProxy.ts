@@ -386,7 +386,7 @@ export default class PlayerProxy {
         listeners.splice(id, 1);
     }
 
-    public onDestroy() {
+    public destroy() {
         if (this.pollSourceId != null) {
             GLib.source_remove(this.pollSourceId);
         }
