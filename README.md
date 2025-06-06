@@ -1,6 +1,3 @@
-## Note
- This is a fork of [media-control](https://github.com/sakithb/media-controls) by @sakithb, with the purpose of adding a feature to display the current player's lyric information.
-
 ## What does this extension do?
 
 Show controls and information of the currently playing media in the panel.
@@ -13,41 +10,14 @@ Show controls and information of the currently playing media in the panel.
 - Popup with album art and a slider to control the playback
 - Scrolling animations
 - Blacklist players
-- Register a DBus service, receive lyric from clients, and show it
 
-
-# How to use the lyric service ?
--  ## DBus information
-    - busName = "org.gnome.Shell.TrayLyric"
-    - objectPath = "/org/gnome/Shell/TrayLyric"
-    - interfaceName = "org.gnome.Shell.TrayLyric"
-
-    - `UpdateLyric: (lrcObj: string) => void`: 
-        - Parameter: lrcObj, a JSON string in the following format:
-          ```json
-          {
-            "content": "lyric",
-            // Current lyric.If set to "", it will display the media title.
-
-            "time": "4.5", 
-            // Numeric type, in seconds, used to control the speed and duration
-            // of the lyric scrolling.
-            
-            "sender": "VutronMusic" 
-            // Part of your mpris player's name. For exmaple,if the name of your
-            // mpris player is ‘org.mpris.MediaPlayer2.VutronMusic’， the sender 
-            // should set to 'VutronMusic', or 'MediaPlayer2' or any part of the
-            // name, but an inaccurate name may cause the player and the lyrics 
-            // to not match correctly.
-          }
-          ```
 ---
+
 ## How to install
 
-#### Install from extensions.gnome.org (Recommended)(not yet)
+#### Install from extensions.gnome.org (Recommended)
 
-<img src="assets/images/ego.png" height="100">
-<!-- (https://extensions.gnome.org/extension/4470/media-controls/) -->
+[<img src="assets/images/ego.png" height="100">](https://extensions.gnome.org/extension/4470/media-controls/)
 
 #### Manual installation
 

@@ -211,10 +211,3 @@ export interface StdInterface extends BaseInterface<StdPropertiesSignalArgs> {
         callback: (returnValue: MethodResult<string[]>, errorObj: unknown, fdList: unknown[]) => void,
     ): void;
 }
-
-export interface LyricInterface extends BaseInterface<object> {
-    LikedStatus: boolean;
-    CurrentLyric: string;
-
-    LikeThisTrack(): void;
-}

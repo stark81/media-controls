@@ -30,17 +30,12 @@ import {
 Gio._promisify(GdkPixbuf.Pixbuf, "new_from_stream_async", "new_from_stream_finish");
 Gio._promisify(Gio.File.prototype, "query_info_async", "query_info_finish");
 
-function find_child_by_name(parent: Clutter.Actor | Clutter.Container, name: string) {
-    if (Clutter.Container === undefined) {
-        const children = (parent as Clutter.Actor).get_children();
-
-        for (const child of children) {
-            if (child.get_name() === name) {
-                return child;
-            }
+function find_child_by_name(parent: Clutter.Actor, name: string) {
+    const children = parent.get_children();
+    for (const child of children) {
+        if (child.get_name() === name) {
+            return child;
         }
-    } else {
-        return parent.find_child_by_name(name);
     }
 }
 
@@ -85,8 +80,9 @@ class PanelButton extends PanelMenu.Button {
         this.addProxyListeners();
         this.initActions();
 
+        // @ts-expect-error nothing
         this.menu.box.add_style_class_name("popup-menu-container");
-        this.connect("destroy", this.destroy.bind(this));
+        this.connect("destroy", this.onDestroy.bind(this));
     }
 
     public updateProxy(playerProxyArray: [PlayerProxy, unknown]) {
@@ -193,6 +189,7 @@ class PanelButton extends PanelMenu.Button {
         }
 
         if (this.menuBox.get_parent() == null) {
+            // @ts-expect-error nothing
             this.menu.addMenuItem(this.menuBox);
         }
     }
@@ -200,7 +197,7 @@ class PanelButton extends PanelMenu.Button {
     private addMenuPlayers() {
         if (this.menuPlayers == null) {
             this.menuPlayers = new St.BoxLayout({
-                vertical: true,
+                orientation: Clutter.Orientation.VERTICAL,
             });
         }
 
@@ -240,7 +237,6 @@ class PanelButton extends PanelMenu.Button {
             });
 
             const tapAction = new Clutter.TapAction();
-
             tapAction.connect("tap", () => {
                 if (this.playerProxy.isPlayerPinned()) {
                     this.playerProxy.unpinPlayer();
@@ -369,7 +365,6 @@ class PanelButton extends PanelMenu.Button {
 
         if (stream == null && this.playerProxy.metadata["xesam:url"] != null) {
             const trackUri = GLib.uri_parse(this.playerProxy.metadata["xesam:url"], GLib.UriFlags.NONE);
-
             if (trackUri != null && trackUri.get_scheme() === "file") {
                 const file = Gio.File.new_for_uri(trackUri.to_string());
                 const info = await file
@@ -401,8 +396,9 @@ class PanelButton extends PanelMenu.Button {
                 const height = width / aspectRatio;
                 const format = pixbuf.hasAlpha ? Cogl.PixelFormat.RGBA_8888 : Cogl.PixelFormat.RGB_888;
 
-                const image = St.ImageContent.new_with_preferred_size(width, height) as St.ImageContent & Clutter.Image;
-                image.set_bytes(pixbuf.pixelBytes, format, pixbuf.width, pixbuf.height, pixbuf.rowstride);
+                const image = St.ImageContent.new_with_preferred_size(width, height) as St.ImageContent;
+                const context = global.stage.context.get_backend().get_cogl_context();
+                image.set_bytes(context, pixbuf.pixelBytes, format, pixbuf.width, pixbuf.height, pixbuf.rowstride);
 
                 this.menuImage.iconSize = -1;
                 this.menuImage.gicon = null;
@@ -434,7 +430,7 @@ class PanelButton extends PanelMenu.Button {
     private addMenuLabels() {
         if (this.menuLabels == null) {
             this.menuLabels = new St.BoxLayout({
-                vertical: true,
+                orientation: Clutter.Orientation.VERTICAL,
             });
         }
 
@@ -798,6 +794,7 @@ class PanelButton extends PanelMenu.Button {
     }
 
     private getMenuItemWidth() {
+        // @ts-expect-error nothing
         const menuContainer = this.menu.box.get_parent().get_parent() as St.Widget;
         const minWidth = menuContainer.get_theme_node().get_min_width() - 24;
 
@@ -820,12 +817,12 @@ class PanelButton extends PanelMenu.Button {
                 this.buttonLabel?.pauseScrolling();
                 this.menuLabelTitle.pauseScrolling();
                 this.menuLabelSubtitle.pauseScrolling();
-                this.menuSlider?.pauseTransition();
+                this.menuSlider.pauseTransition();
             } else {
                 this.buttonLabel?.resumeScrolling();
                 this.menuLabelTitle.resumeScrolling();
                 this.menuLabelSubtitle.resumeScrolling();
-                this.menuSlider?.resumeTransition();
+                this.menuSlider.resumeTransition();
             }
         });
 
@@ -876,7 +873,7 @@ class PanelButton extends PanelMenu.Button {
 
     private removeProxyListeners() {
         for (const [property, id] of this.changeListenerIds.entries()) {
-            this.playerProxy?.removeListener(property, id);
+            this.playerProxy.removeListener(property, id);
         }
     }
 
@@ -965,73 +962,60 @@ class PanelButton extends PanelMenu.Button {
                 this.playerProxy.playPause();
                 break;
             }
-
             case MouseActions.PLAY: {
                 this.playerProxy.play();
                 break;
             }
-
             case MouseActions.PAUSE: {
                 this.playerProxy.pause();
                 break;
             }
-
             case MouseActions.NEXT_TRACK: {
                 this.playerProxy.next();
                 break;
             }
-
             case MouseActions.PREVIOUS_TRACK: {
                 this.playerProxy.previous();
                 break;
             }
-
             case MouseActions.VOLUME_UP: {
                 this.playerProxy.volume = Math.min(this.playerProxy.volume + 0.05, 1);
                 break;
             }
-
             case MouseActions.VOLUME_DOWN: {
                 this.playerProxy.volume = Math.max(this.playerProxy.volume - 0.05, 0);
                 break;
             }
-
             case MouseActions.TOGGLE_LOOP: {
                 this.playerProxy.toggleLoop();
                 break;
             }
-
             case MouseActions.TOGGLE_SHUFFLE: {
                 this.playerProxy.toggleShuffle();
                 break;
             }
-
             case MouseActions.SHOW_POPUP_MENU: {
                 this.menu.toggle();
                 break;
             }
-
             case MouseActions.RAISE_PLAYER: {
                 this.playerProxy.raise();
                 break;
             }
-
             case MouseActions.QUIT_PLAYER: {
                 this.playerProxy.quit();
                 break;
             }
-
             case MouseActions.OPEN_PREFERENCES: {
                 this.extension.openPreferences();
                 break;
             }
-
             default:
                 break;
         }
     }
 
-    public destroy() {
+    private onDestroy() {
         this.removeProxyListeners();
         this.playerProxy = null;
 
@@ -1065,8 +1049,6 @@ class PanelButton extends PanelMenu.Button {
             GLib.source_remove(this.doubleTapSourceId);
             this.doubleTapSourceId = null;
         }
-
-        super.destroy();
     }
 }
 

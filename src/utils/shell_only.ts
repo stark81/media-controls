@@ -44,7 +44,7 @@ export const getImage = async (url: string): Promise<Gio.InputStream> => {
     const urlBytes = encoder.encode(url);
 
     const encodedUrl = GLib.base64_encode(urlBytes);
-    const path = GLib.build_filenamev([GLib.get_user_cache_dir(), "mediacontrols@stark81.github.com", encodedUrl]);
+    const path = GLib.build_filenamev([GLib.get_user_cache_dir(), "mediacontrols@cliffniff.github.com", encodedUrl]);
 
     const exitCode = GLib.mkdir_with_parents(GLib.path_get_dirname(path), 493);
     if (exitCode === -1) {

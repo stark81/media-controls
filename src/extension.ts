@@ -22,11 +22,10 @@ import {
     MPRIS_IFACE_NAME,
     DBUS_OBJECT_PATH,
     DBUS_IFACE_NAME,
-    LYRIC_IFACE_NAME,
     ExtensionPositions,
     MouseActions,
-    // interfaceXml,
-    LYRIC_OBJECT_PATH,
+    LYRIC_IFACE_NAME,
+    LYRIC_OBJECT_PATH
 } from "./types/enums/common.js";
 
 Gio._promisify(Gio.File.prototype, "load_contents_async", "load_contents_finish");
@@ -317,26 +316,30 @@ export default class MediaControls extends Extension {
         const lyricNodeXml = textDecoder.decode(lyricBytes[0]);
 
         const watchNodeInfo = Gio.DBusNodeInfo.new_for_xml(watchNodeXml);
-        const watchInterface = watchNodeInfo.interfaces.find((iface) => iface.name === DBUS_IFACE_NAME);
+        const watchInterface = watchNodeInfo.lookup_interface(DBUS_IFACE_NAME);
         this.watchIfaceInfo = watchInterface;
 
         const lyricNodeInfo = Gio.DBusNodeInfo.new_for_xml(lyricNodeXml);
-        const lyricInterface = lyricNodeInfo.interfaces.find((iface) => iface.name === LYRIC_IFACE_NAME);
+        const lyricInterface = lyricNodeInfo.lookup_interface(LYRIC_IFACE_NAME);
+        // @ts-expect-error nothing
         const lyricIfaceInfoString = new GLib.String("");
         lyricInterface.generate_xml(4, lyricIfaceInfoString);
         this.lyricIfaceInfo = lyricInterface;
 
         const mprisNodeInfo = Gio.DBusNodeInfo.new_for_xml(mprisNodeXml);
-        const mprisInterface = mprisNodeInfo.interfaces.find((iface) => iface.name === MPRIS_IFACE_NAME);
-        const mprisPlayerInterface = mprisNodeInfo.interfaces.find((iface) => iface.name === MPRIS_PLAYER_IFACE_NAME);
-        const propertiesInterface = mprisNodeInfo.interfaces.find((iface) => iface.name === DBUS_PROPERTIES_IFACE_NAME);
+        const mprisInterface = mprisNodeInfo.lookup_interface(MPRIS_IFACE_NAME);
+        const mprisPlayerInterface = mprisNodeInfo.lookup_interface(MPRIS_PLAYER_IFACE_NAME);
+        const propertiesInterface = mprisNodeInfo.lookup_interface(DBUS_PROPERTIES_IFACE_NAME);
 
+        // @ts-expect-error nothing
         const mprisInterfaceString = new GLib.String("");
         mprisInterface.generate_xml(4, mprisInterfaceString);
 
+        // @ts-expect-error nothing
         const mprisPlayerInterfaceString = new GLib.String("");
         mprisPlayerInterface.generate_xml(4, mprisPlayerInterfaceString);
 
+        // @ts-expect-error nothing
         const propertiesInterfaceString = new GLib.String("");
         propertiesInterface.generate_xml(4, propertiesInterfaceString);
 
@@ -352,7 +355,7 @@ export default class MediaControls extends Extension {
         }
 
         await this.addRunningPlayers();
-        await this.createLyricProxy().catch(handleError);
+        await this.createLyricProxy().catch(handleError)
     }
 
     private async initWatchProxy() {
@@ -442,7 +445,6 @@ export default class MediaControls extends Extension {
 
     private async addPlayer(busName: string) {
         debugLog("Adding player:", busName);
-
         try {
             const playerProxy = new PlayerProxy(busName);
             const initSuccess = await playerProxy
@@ -462,7 +464,6 @@ export default class MediaControls extends Extension {
 
             playerProxy.onChanged("IsPinned", this.setActivePlayer.bind(this));
             playerProxy.onChanged("PlaybackStatus", this.setActivePlayer.bind(this));
-
             playerProxy.onChanged("IsInvalid", () => {
                 this.setActivePlayer();
                 this.panelBtn?.updateWidgets(WidgetFlags.MENU_PLAYERS);
@@ -478,7 +479,7 @@ export default class MediaControls extends Extension {
 
     private removePlayer(busName: string) {
         debugLog("Removing player:", busName);
-        this.playerProxies.get(busName)[0]?.destroy();
+        this.playerProxies.get(busName)[0]?.onDestroy();
         this.playerProxies.delete(busName);
         this.panelBtn?.updateWidgets(WidgetFlags.MENU_PLAYERS);
         this.setActivePlayer();
@@ -549,17 +550,19 @@ export default class MediaControls extends Extension {
 
     private updateMediaNotificationVisiblity(shouldReset = false) {
         if (this.mediaSectionAddFunc && (shouldReset || this.hideMediaNotification === false)) {
-            Mpris.MediaSection.prototype._addPlayer = this.mediaSectionAddFunc;
+            Mpris.MprisSource.prototype._addPlayer = this.mediaSectionAddFunc;
             this.mediaSectionAddFunc = null;
 
-            Main.panel.statusArea.dateMenu._messageList._mediaSection._onProxyReady();
+            // @ts-expect-error nothing
+            Main.panel.statusArea.dateMenu._messageList._messageView._mediaSource._onProxyReady();
         } else {
-            this.mediaSectionAddFunc = Mpris.MediaSection.prototype._addPlayer;
+            this.mediaSectionAddFunc = Mpris.MprisSource.prototype._addPlayer;
+            Mpris.MprisSource.prototype._addPlayer = function () {};
 
-            Mpris.MediaSection.prototype._addPlayer = function () {};
-
-            if (Main.panel.statusArea.dateMenu._messageList._mediaSection._players != null) {
-                for (const player of Main.panel.statusArea.dateMenu._messageList._mediaSection._players.values()) {
+            // @ts-expect-error nothing
+            if (Main.panel.statusArea.dateMenu._messageList._messageView._mediaSource._players != null) {
+                // @ts-expect-error nothing
+                for (const player of Main.panel.statusArea.dateMenu._messageList._messageView._mediaSource._players.values()) {
                     player._close();
                 }
             }
