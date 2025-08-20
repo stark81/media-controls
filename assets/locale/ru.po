@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-06-30 18:44+0200\n"
+"POT-Creation-Date: 2025-08-20 12:47+0800\n"
 "PO-Revision-Date: 2025-06-30 18:50+0200\n"
 "Last-Translator: Christian Lauinger <christian@lauinger-clan.de>\n"
 "Language-Team: \n"
@@ -372,17 +372,24 @@ msgstr "Не удалось очистить кэш!"
 
 #: src/helpers/shell/PanelButton.js:361
 #: dist/temp/helpers/shell/PanelButton.js:361
+#: src/helpers/shell/PanelButton.js:386
+#: dist/temp/helpers/shell/PanelButton.js:386
 msgid "Unknown player"
 msgstr "Неизвестный плеер"
 
 #: src/helpers/shell/PanelButton.js:510 src/helpers/shell/PanelButton.js:825
 #: dist/temp/helpers/shell/PanelButton.js:510
 #: dist/temp/helpers/shell/PanelButton.js:825
+#: src/helpers/shell/PanelButton.js:539 src/helpers/shell/PanelButton.js:868
+#: dist/temp/helpers/shell/PanelButton.js:539
+#: dist/temp/helpers/shell/PanelButton.js:868
 msgid "Unknown artist"
 msgstr "Неизвестный артист"
 
 #: src/helpers/shell/PanelButton.js:827
 #: dist/temp/helpers/shell/PanelButton.js:827
+#: src/helpers/shell/PanelButton.js:870
+#: dist/temp/helpers/shell/PanelButton.js:870
 msgid "Unknown album"
 msgstr "Неизвестный альбом"
 

@@ -1,27 +1,28 @@
-# Czech translation for Media Controls
+# SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
-# FIRST AUTHOR Amerey.eu <info@amerey.eu>, 2023.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
+#, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: \n"
+"Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-08-20 12:47+0800\n"
-"PO-Revision-Date: 2025-06-30 18:50+0200\n"
-"Last-Translator: Christian Lauinger <christian@lauinger-clan.de>\n"
-"Language-Team: \n"
-"Language: cs\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 3.6\n"
 
 #: assets/ui/app-chooser.ui:6
 msgid "Select app to blacklist"
 msgstr ""
 
 #: assets/ui/app-chooser.ui:19 src/prefs.js:232 dist/temp/prefs.js:232
+#: src/prefs.js:232 dist/temp/prefs.js:232
 msgid "Cancel"
 msgstr ""
 
@@ -31,7 +32,7 @@ msgstr ""
 
 #: assets/ui/blacklisted-players.ui:6
 msgid "Blacklist players"
-msgstr "Přehrávače na blacklistu"
+msgstr ""
 
 #: assets/ui/blacklisted-players.ui:7
 msgid "Blacklisted players will be ignored by the extension."
@@ -47,7 +48,7 @@ msgstr ""
 
 #: assets/ui/element-list.ui:15 assets/ui/prefs.ui:160
 msgid "Player icon"
-msgstr "Ikona přehrávače"
+msgstr ""
 
 #: assets/ui/element-list.ui:26 assets/ui/label-list.ui:6
 msgid "Label"
@@ -55,7 +56,7 @@ msgstr ""
 
 #: assets/ui/element-list.ui:37 assets/ui/prefs.ui:119
 msgid "Player controls"
-msgstr "Ovládání přehrávače"
+msgstr ""
 
 #: assets/ui/label-list.ui:18
 msgid "Add item"
@@ -67,7 +68,7 @@ msgstr ""
 
 #: assets/ui/prefs.ui:6
 msgid "General"
-msgstr "Obecné"
+msgstr ""
 
 #: assets/ui/prefs.ui:10
 msgid "Common"
@@ -107,7 +108,7 @@ msgstr ""
 
 #: assets/ui/prefs.ui:46
 msgid "Hide the media notification"
-msgstr "Skrýt oznámení o médiích"
+msgstr ""
 
 #: assets/ui/prefs.ui:47
 msgid "Hide the media notifications in the notification list"
@@ -127,7 +128,7 @@ msgstr ""
 
 #: assets/ui/prefs.ui:63
 msgid "Homepage"
-msgstr "Domovská stránka"
+msgstr ""
 
 #: assets/ui/prefs.ui:77
 msgid "Release notes"
@@ -175,7 +176,7 @@ msgstr ""
 
 #: assets/ui/prefs.ui:169
 msgid "Colored player icon"
-msgstr "Barevná ikona přehrávače"
+msgstr ""
 
 #: assets/ui/prefs.ui:179
 msgid "Positions"
@@ -187,7 +188,7 @@ msgstr ""
 
 #: assets/ui/prefs.ui:186
 msgid "Position"
-msgstr "Pozice"
+msgstr ""
 
 #: assets/ui/prefs.ui:187
 msgid "Position of the extension in the panel"
@@ -195,15 +196,15 @@ msgstr ""
 
 #: assets/ui/prefs.ui:191
 msgid "Left"
-msgstr "Vlevo"
+msgstr ""
 
 #: assets/ui/prefs.ui:192
 msgid "Center"
-msgstr "Uprostřed"
+msgstr ""
 
 #: assets/ui/prefs.ui:193
 msgid "Right"
-msgstr "Vpravo"
+msgstr ""
 
 #: assets/ui/prefs.ui:201
 msgid "Index"
@@ -215,7 +216,7 @@ msgstr ""
 
 #: assets/ui/prefs.ui:223
 msgid "Shortcuts"
-msgstr "Klávesové zkratky"
+msgstr ""
 
 #: assets/ui/prefs.ui:229 assets/ui/prefs.ui:373
 msgid "Show popup menu"
@@ -231,7 +232,7 @@ msgstr ""
 
 #: assets/ui/prefs.ui:245
 msgid "Mouse actions"
-msgstr "Akce myši"
+msgstr ""
 
 #: assets/ui/prefs.ui:248
 msgid "Left click / Tap"
@@ -239,11 +240,11 @@ msgstr ""
 
 #: assets/ui/prefs.ui:254
 msgid "Middle click"
-msgstr "Prostřední klik"
+msgstr ""
 
 #: assets/ui/prefs.ui:260
 msgid "Right click"
-msgstr "Pravý klik"
+msgstr ""
 
 #: assets/ui/prefs.ui:266
 msgid "Double click / Double tap"
@@ -259,11 +260,11 @@ msgstr ""
 
 #: assets/ui/prefs.ui:286
 msgid "Other"
-msgstr "Ostatní"
+msgstr ""
 
 #: assets/ui/prefs.ui:290
 msgid "Cache"
-msgstr "Mezipaměť"
+msgstr ""
 
 #: assets/ui/prefs.ui:291
 msgid ""
@@ -276,8 +277,9 @@ msgid "Cache album art"
 msgstr ""
 
 #: assets/ui/prefs.ui:299 src/prefs.js:233 dist/temp/prefs.js:233
+#: src/prefs.js:233 dist/temp/prefs.js:233
 msgid "Clear cache"
-msgstr "Vyčistit mezipaměť"
+msgstr ""
 
 #: assets/ui/prefs.ui:309
 msgid "Clear"
@@ -296,7 +298,7 @@ msgstr ""
 
 #: assets/ui/prefs.ui:363
 msgid "None"
-msgstr "---"
+msgstr ""
 
 #: assets/ui/prefs.ui:364
 msgid "Play/Pause"
@@ -304,11 +306,11 @@ msgstr ""
 
 #: assets/ui/prefs.ui:365
 msgid "Play"
-msgstr "Přehrát"
+msgstr ""
 
 #: assets/ui/prefs.ui:366
 msgid "Pause"
-msgstr "Pozastavit"
+msgstr ""
 
 #: assets/ui/prefs.ui:367
 msgid "Next track"
@@ -320,11 +322,11 @@ msgstr ""
 
 #: assets/ui/prefs.ui:369
 msgid "Volume up"
-msgstr "Zvýšit hlasitost"
+msgstr ""
 
 #: assets/ui/prefs.ui:370
 msgid "Volume down"
-msgstr "Snížit hlasitost"
+msgstr ""
 
 #: assets/ui/prefs.ui:371
 msgid "Toggle loop"
@@ -332,35 +334,39 @@ msgstr ""
 
 #: assets/ui/prefs.ui:372
 msgid "Toggle shuffle"
-msgstr "Přepnout náhodné přehrávání"
+msgstr ""
 
 #: assets/ui/prefs.ui:374
 msgid "Raise player"
-msgstr "Přepnout další skladbu"
+msgstr ""
 
 #: assets/ui/prefs.ui:375
 msgid "Quit player"
-msgstr "Ukončit"
+msgstr ""
 
 #: assets/ui/prefs.ui:376
 msgid "Open preferences"
 msgstr ""
 
-#: src/prefs.js:231 dist/temp/prefs.js:231
+#: src/prefs.js:231 dist/temp/prefs.js:231 src/prefs.js:231
+#: dist/temp/prefs.js:231
 msgid "Are you sure you want to clear the cache?"
 msgstr ""
 
 #: src/prefs.js:238 src/prefs.js:245 dist/temp/prefs.js:238
-#: dist/temp/prefs.js:245
+#: dist/temp/prefs.js:245 src/prefs.js:238 src/prefs.js:245
+#: dist/temp/prefs.js:238 dist/temp/prefs.js:245
 #, javascript-format
 msgid "Cache size: %s"
 msgstr ""
 
-#: src/prefs.js:342 dist/temp/prefs.js:342
+#: src/prefs.js:342 dist/temp/prefs.js:342 src/prefs.js:342
+#: dist/temp/prefs.js:342
 msgid "Cache cleared successfully!"
 msgstr ""
 
-#: src/prefs.js:344 dist/temp/prefs.js:344
+#: src/prefs.js:344 dist/temp/prefs.js:344 src/prefs.js:344
+#: dist/temp/prefs.js:344
 msgid "Failed to clear cache!"
 msgstr ""
 
@@ -378,15 +384,17 @@ msgstr ""
 #: dist/temp/helpers/shell/PanelButton.js:539
 #: dist/temp/helpers/shell/PanelButton.js:868
 msgid "Unknown artist"
-msgstr "Neznámý umělec"
+msgstr ""
 
 #: src/helpers/shell/PanelButton.js:827
 #: dist/temp/helpers/shell/PanelButton.js:827
 #: src/helpers/shell/PanelButton.js:870
 #: dist/temp/helpers/shell/PanelButton.js:870
 msgid "Unknown album"
-msgstr "Neznámé album"
+msgstr ""
 
+#: src/helpers/prefs/BlacklistedPlayers.js:72
+#: dist/temp/helpers/prefs/BlacklistedPlayers.js:72
 #: src/helpers/prefs/BlacklistedPlayers.js:72
 #: dist/temp/helpers/prefs/BlacklistedPlayers.js:72
 msgid ""
@@ -395,173 +403,6 @@ msgid ""
 msgstr ""
 
 #: src/helpers/prefs/LabelList.js:121 dist/temp/helpers/prefs/LabelList.js:121
+#: src/helpers/prefs/LabelList.js:121 dist/temp/helpers/prefs/LabelList.js:121
 msgid "Custom text"
 msgstr ""
-
-#~ msgid "Artist"
-#~ msgstr "Interpret"
-
-#~ msgid "Album"
-#~ msgstr "Album"
-
-#~ msgid "[MediaControls] Enabling"
-#~ msgstr "[MediaControls] Aktivace"
-
-#~ msgid "[MediaControls] Disabling"
-#~ msgstr "[MediaControls] Deaktivace"
-
-#~ msgid "[MediaControls] Reloading"
-#~ msgstr "[MediaControls] Opětovné načítání"
-
-#~ msgid "Track"
-#~ msgstr "Skladba"
-
-#~ msgid "Track + Album"
-#~ msgstr "Skladba + Album"
-
-#~ msgid "Artist + Album"
-#~ msgstr "Interpret + Album"
-
-#~ msgid "Album + Artist"
-#~ msgstr "Album + Interpret"
-
-#~ msgid "Album + Track"
-#~ msgstr "Album + Skladba"
-
-#~ msgid "URL"
-#~ msgstr "URL"
-
-#~ msgid "Player name"
-#~ msgstr "Název přehrávače"
-
-#~ msgid "Playback status"
-#~ msgstr "Stav přehrávání"
-
-#~ msgid "Filename"
-#~ msgstr "Název souboru"
-
-#~ msgid "Control icons"
-#~ msgstr "Ikony ovládání"
-
-#~ msgid "Sources menu"
-#~ msgstr "Nabídka zdrojů"
-
-#~ msgid "Left double click"
-#~ msgstr "Levý dvojklik"
-
-#~ msgid "Right double click"
-#~ msgstr "Pravý dvojklik"
-
-#~ msgid "Hover"
-#~ msgstr "Najetí myší"
-
-#~ msgid "unstable"
-#~ msgstr "nestabilní"
-
-#~ msgid "Next"
-#~ msgstr "Další"
-
-#~ msgid "Previous"
-#~ msgstr "Předchozí"
-
-#~ msgid "Cycle loop options"
-#~ msgstr "Volby cyklické smyčky"
-
-#~ msgid "Toggle sources menu"
-#~ msgstr "Přepnout nabídku zdrojů"
-
-#~ msgid "Toggle track information menu"
-#~ msgstr "Přepnout nabídku informací o skladbě"
-
-#~ msgid "Settings"
-#~ msgstr "Nastavení"
-
-#~ msgid "Maximum widget width"
-#~ msgstr "Maximální šířka doplňku"
-
-#~ msgid "0 to disable"
-#~ msgstr "0 pro deaktivaci"
-
-#~ msgid "No. of seconds to seek by"
-#~ msgstr "Počet sekund k vyhledání"
-
-#~ msgid "Use native seek"
-#~ msgstr "Použít nativní hledání"
-
-#~ msgid "Disable this if seeking is not working"
-#~ msgstr "Pokud vyhledávání nefunguje, deaktivujte tuto možnost"
-
-#~ msgid "Clip title and artist in track information menu"
-#~ msgstr "Ořezat název a interpreta v nabídce informací o skladbě"
-
-#~ msgid "Disable this to use wrapping instead"
-#~ msgstr "Chcete-li místo toho použít zalamování, deaktivujte tuto možnost"
-
-#~ msgid "Enable this to scroll the panel label instead of clipping"
-#~ msgstr "Povolte tuto možnost, chcete-li posouvat štítek namísto ořezávání"
-
-#~ msgid "Starting label"
-#~ msgstr "Počáteční štítek"
-
-#~ msgid "Separating label"
-#~ msgstr "Oddělovací štítek"
-
-#~ msgid "Ending label"
-#~ msgstr "Koncový štítek"
-
-#~ msgid "Github"
-#~ msgstr "Github"
-
-#~ msgid "Visibility"
-#~ msgstr "Zobrazení"
-
-#~ msgid "show/hide elements"
-#~ msgstr "zobrazit/skrýt prvky"
-
-#~ msgid "Title/Track name"
-#~ msgstr "Jméno/Název skladby"
-
-#~ msgid "Separators"
-#~ msgstr "Oddělovače"
-
-#~ msgid "Colors"
-#~ msgstr "Barvy"
-
-#~ msgid "Separator characters"
-#~ msgstr "Oddělovací znaky"
-
-#~ msgid "Preset"
-#~ msgstr "Předvolba"
-
-#~ msgid "To use it choose 'Custom' under 'Preset' selection"
-#~ msgstr "Chcete-li jej použít, vyberte „Vlastní“ pod výběrem „Předvolba“"
-
-#~ msgid "Appearance"
-#~ msgstr "Vzhled"
-
-#~ msgid "Extension position"
-#~ msgstr "Pozice doplňku"
-
-#~ msgid "Element order"
-#~ msgstr "Pořadí"
-
-#~ msgid "Hotkey"
-#~ msgstr "Klávesová zkratka"
-
-#~ msgid "Hot key"
-#~ msgstr "Klávesová zkratka"
-
-#~ msgid "Hot key to toggle the track information menu"
-#~ msgstr "Klávesová zkratka pro přepínání nabídky informací o skladbě"
-
-#~ msgid "Select a hotkey"
-#~ msgstr "Vyberte klávesovou zkratku"
-
-#~ msgid "New hotkey"
-#~ msgstr "Nová klávesová zkratka"
-
-#~ msgid "Add player"
-#~ msgstr "Přidat přehrávač"
-
-#~ msgid "Determine player automatically"
-#~ msgstr "Automaticky vybrat přehrávač"

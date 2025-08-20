@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-07-27 10:15+0200\n"
+"POT-Creation-Date: 2025-08-20 12:47+0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Jimmy Scionti <jimmy.scionti@gmail.com>\n"
 "Language-Team: Jimmy Scionti <jimmy.scionti@gmail.com>\n"
@@ -270,7 +270,8 @@ msgid ""
 "This extension cache album art to improve performance. You can clear the "
 "cache here."
 msgstr ""
-"Questa estensione memorizza le copertine degli album per migliorare le prestazioni. Puoi svuotare la cache qui."
+"Questa estensione memorizza le copertine degli album per migliorare le "
+"prestazioni. Puoi svuotare la cache qui."
 
 #: assets/ui/prefs.ui:294
 msgid "Cache album art"
@@ -370,17 +371,24 @@ msgstr "Impossibile svuotare la cache!"
 
 #: src/helpers/shell/PanelButton.js:361
 #: dist/temp/helpers/shell/PanelButton.js:361
+#: src/helpers/shell/PanelButton.js:386
+#: dist/temp/helpers/shell/PanelButton.js:386
 msgid "Unknown player"
 msgstr "Lettore sconosciuto"
 
 #: src/helpers/shell/PanelButton.js:510 src/helpers/shell/PanelButton.js:825
 #: dist/temp/helpers/shell/PanelButton.js:510
 #: dist/temp/helpers/shell/PanelButton.js:825
+#: src/helpers/shell/PanelButton.js:539 src/helpers/shell/PanelButton.js:868
+#: dist/temp/helpers/shell/PanelButton.js:539
+#: dist/temp/helpers/shell/PanelButton.js:868
 msgid "Unknown artist"
 msgstr "Artista sconosciuto"
 
 #: src/helpers/shell/PanelButton.js:827
 #: dist/temp/helpers/shell/PanelButton.js:827
+#: src/helpers/shell/PanelButton.js:870
+#: dist/temp/helpers/shell/PanelButton.js:870
 msgid "Unknown album"
 msgstr "Album sconosciuto"
 
@@ -390,9 +398,9 @@ msgid ""
 "<span size='x-large' weight='bold' color='#ccc'>No players are blacklisted</"
 "span>"
 msgstr ""
-"<span size='x-large' weight='bold' color='#ccc'>Nessun lettore è escluso</span>"
+"<span size='x-large' weight='bold' color='#ccc'>Nessun lettore è escluso</"
+"span>"
 
 #: src/helpers/prefs/LabelList.js:121 dist/temp/helpers/prefs/LabelList.js:121
 msgid "Custom text"
 msgstr "Testo personalizzato"
-
