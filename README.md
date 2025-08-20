@@ -1,5 +1,5 @@
 ## Note
- This is a fork of [media-control](https://github.com/sakithb/media-controls) by @sakithb, with the purpose of adding a feature to display the current player's lyric information.
+ This is a fork of [media-control](https://github.com/sakithb/media-controls) by @sakithb, with the purpose of adding a feature to show the current player's lyric information.
 
 ## What does this extension do?
 

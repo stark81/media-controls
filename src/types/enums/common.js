@@ -1,4 +1,4 @@
-import { Enum } from "../misc.js";
+/** @import { Enum } from '../misc.js' */
 
 export const DBUS_IFACE_NAME = "org.freedesktop.DBus";
 export const MPRIS_OBJECT_PATH = "/org/mpris/MediaPlayer2";
@@ -9,38 +9,41 @@ export const MPRIS_PLAYER_IFACE_NAME = "org.mpris.MediaPlayer2.Player";
 export const LYRIC_IFACE_NAME = "org.gnome.Shell.TrayLyric";
 export const LYRIC_OBJECT_PATH = "/org/gnome/Shell/TrayLyric";
 
+/** @typedef {Enum<typeof PanelElements>} PanelElements */
+/** @typedef {Enum<typeof LabelTypes>} LabelTypes */
+/** @typedef {Enum<typeof ExtensionPositions>} ExtensionPositions */
+/** @typedef {Enum<typeof MouseActions>} MouseActions */
+/** @typedef {Enum<typeof LoopStatus>} LoopStatus */
+/** @typedef {Enum<typeof PlaybackStatus>} PlaybackStatus */
+/** @typedef {Enum<typeof WidgetFlags>} WidgetFlags */
+
 export const PlaybackStatus = {
     PLAYING: "Playing",
     PAUSED: "Paused",
     STOPPED: "Stopped",
-} as const;
-
+};
 export const LoopStatus = {
     NONE: "None",
     TRACK: "Track",
     PLAYLIST: "Playlist",
-} as const;
-
+};
 export const ExtensionPositions = {
     LEFT: "left",
     CENTER: "center",
     RIGHT: "right",
-} as const;
-
+};
 export const LabelTypes = {
     ARTIST: "Artist",
     TITLE: "Title",
     ALBUM: "Album",
     DISC_NUMBER: "Disc Number",
     TRACK_NUMBER: "Track Number",
-} as const;
-
+};
 export const PanelElements = {
     ICON: 0,
     LABEL: 1,
     CONTROLS: 2,
-} as const;
-
+};
 export const MouseActions = {
     NONE: 0,
     PLAY_PAUSE: 1,
@@ -56,8 +59,7 @@ export const MouseActions = {
     RAISE_PLAYER: 11,
     QUIT_PLAYER: 12,
     OPEN_PREFERENCES: 13,
-} as const;
-
+};
 export const WidgetFlags = {
     PANEL_ICON: 1 << 0,
     PANEL_LABEL: 1 << 1,
@@ -81,25 +83,4 @@ export const WidgetFlags = {
     MENU_CONTROLS: (1 << 12) | (1 << 13) | (1 << 14) | (1 << 15) | (1 << 16),
     MENU: (1 << 8) | (1 << 9) | (1 << 10) | (1 << 11) | (1 << 12) | (1 << 13) | (1 << 14) | (1 << 15) | (1 << 16),
     ALL: ~(-1 << 17),
-} as const;
-
-export type PanelElements = Enum<typeof PanelElements>;
-export type LabelTypes = Enum<typeof LabelTypes>;
-export type ExtensionPositions = Enum<typeof ExtensionPositions>;
-export type MouseActions = Enum<typeof MouseActions>;
-export type LoopStatus = Enum<typeof LoopStatus>;
-export type PlaybackStatus = Enum<typeof PlaybackStatus>;
-export type WidgetFlags = Enum<typeof WidgetFlags>;
-
-export const interfaceXml = `
-<node>
-  <interface name="org.gnome.Shell.TrayLyric">
-    <method name="LikeThisTrack">
-      <arg type="b" name="liked"/>
-    </method>
-    <method name="UpdateLyric">
-      <arg type="s" name="current_lyric"/>
-    </method>
-    <signal name="UpdateLikedStatus"></signal>
-  </interface>
-</node>`;
+};
