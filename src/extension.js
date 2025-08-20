@@ -354,11 +354,17 @@ export default class MediaControls extends Extension {
         this.extensionIndex = this.settings.get_uint("extension-index");
         this.elementsOrder = /** @type {ElementsOrder} */ (this.settings.get_strv("elements-order"));
         this.labelsOrder = this.settings.get_strv("labels-order");
+        // @ts-ignore
         this.mouseActionLeft = this.settings.get_enum("mouse-action-left");
+        // @ts-ignore
         this.mouseActionMiddle = this.settings.get_enum("mouse-action-middle");
+        // @ts-ignore
         this.mouseActionRight = this.settings.get_enum("mouse-action-right");
+        // @ts-ignore
         this.mouseActionDouble = this.settings.get_enum("mouse-action-double");
+        // @ts-ignore
         this.mouseActionScrollUp = this.settings.get_enum("mouse-action-scroll-up");
+        // @ts-ignore
         this.mouseActionScrollDown = this.settings.get_enum("mouse-action-scroll-down");
         this.cacheArt = this.settings.get_boolean("cache-art");
         this.blacklistedPlayers = this.settings.get_strv("blacklisted-players");
@@ -438,21 +444,27 @@ export default class MediaControls extends Extension {
             this.panelBtn?.updateWidgets(WidgetFlags.PANEL_LABEL);
         });
         this.settings.connect("changed::mouse-action-left", () => {
+            // @ts-ignore
             this.mouseActionLeft = this.settings.get_enum("mouse-action-left");
         });
         this.settings.connect("changed::mouse-action-middle", () => {
+            // @ts-ignore
             this.mouseActionMiddle = this.settings.get_enum("mouse-action-middle");
         });
         this.settings.connect("changed::mouse-action-right", () => {
+            // @ts-ignore
             this.mouseActionRight = this.settings.get_enum("mouse-action-right");
         });
         this.settings.connect("changed::mouse-action-double", () => {
+            // @ts-ignore
             this.mouseActionDouble = this.settings.get_enum("mouse-action-double");
         });
         this.settings.connect("changed::mouse-action-scroll-up", () => {
+            // @ts-ignore
             this.mouseActionScrollUp = this.settings.get_enum("mouse-action-scroll-up");
         });
         this.settings.connect("changed::mouse-action-scroll-down", () => {
+            // @ts-ignore
             this.mouseActionScrollDown = this.settings.get_enum("mouse-action-scroll-down");
         });
         this.settings.connect("changed::cache-art", () => {
@@ -558,6 +570,7 @@ export default class MediaControls extends Extension {
         if (this.watchProxy == null) {
             return false;
         }
+        // @ts-ignore
         this.watchProxy.connectSignal("NameOwnerChanged", (proxy, senderName, [busName, oldOwner, newOwner]) => {
             if (busName.startsWith(MPRIS_IFACE_NAME) === false) {
                 return;
@@ -605,6 +618,7 @@ export default class MediaControls extends Extension {
      * @param {{ unpack: () => any[]; }} parameters
      * @param {{ return_value: (arg0: null) => void; }} invocation
      */
+    // @ts-ignore
     onNameAcquired(connection, sender, object_path, interface_name, method_name, parameters, invocation) {
         if (method_name === "UpdateLyric") {
             const current_lyric = parameters.unpack()[0];
