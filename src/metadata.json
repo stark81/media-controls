@@ -5,6 +5,6 @@
   "url": "https://github.com/stark81/media-controls",
   "settings-schema": "org.gnome.shell.extensions.mediacontrols",
   "gettext-domain": "mediacontrols@stark81.github.com",
-  "version-name": "4.1.0",
-  "shell-version": ["48"]
+  "version-name": "4.2.0",
+  "shell-version": ["48", "49"]
 }

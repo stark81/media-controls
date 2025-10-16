@@ -317,7 +317,7 @@ export default class MediaControls extends Extension {
 
     /**
      * @public
-     * @returns {[PlayerProxy, unknown][]}
+     * @returns {[PlayerProxy, LyricObj | null][]}
      */
     getPlayers() {
         const players = [];
@@ -354,17 +354,11 @@ export default class MediaControls extends Extension {
         this.extensionIndex = this.settings.get_uint("extension-index");
         this.elementsOrder = /** @type {ElementsOrder} */ (this.settings.get_strv("elements-order"));
         this.labelsOrder = this.settings.get_strv("labels-order");
-        // @ts-ignore
         this.mouseActionLeft = this.settings.get_enum("mouse-action-left");
-        // @ts-ignore
         this.mouseActionMiddle = this.settings.get_enum("mouse-action-middle");
-        // @ts-ignore
         this.mouseActionRight = this.settings.get_enum("mouse-action-right");
-        // @ts-ignore
         this.mouseActionDouble = this.settings.get_enum("mouse-action-double");
-        // @ts-ignore
         this.mouseActionScrollUp = this.settings.get_enum("mouse-action-scroll-up");
-        // @ts-ignore
         this.mouseActionScrollDown = this.settings.get_enum("mouse-action-scroll-down");
         this.cacheArt = this.settings.get_boolean("cache-art");
         this.blacklistedPlayers = this.settings.get_strv("blacklisted-players");
@@ -444,27 +438,21 @@ export default class MediaControls extends Extension {
             this.panelBtn?.updateWidgets(WidgetFlags.PANEL_LABEL);
         });
         this.settings.connect("changed::mouse-action-left", () => {
-            // @ts-ignore
             this.mouseActionLeft = this.settings.get_enum("mouse-action-left");
         });
         this.settings.connect("changed::mouse-action-middle", () => {
-            // @ts-ignore
             this.mouseActionMiddle = this.settings.get_enum("mouse-action-middle");
         });
         this.settings.connect("changed::mouse-action-right", () => {
-            // @ts-ignore
             this.mouseActionRight = this.settings.get_enum("mouse-action-right");
         });
         this.settings.connect("changed::mouse-action-double", () => {
-            // @ts-ignore
             this.mouseActionDouble = this.settings.get_enum("mouse-action-double");
         });
         this.settings.connect("changed::mouse-action-scroll-up", () => {
-            // @ts-ignore
             this.mouseActionScrollUp = this.settings.get_enum("mouse-action-scroll-up");
         });
         this.settings.connect("changed::mouse-action-scroll-down", () => {
-            // @ts-ignore
             this.mouseActionScrollDown = this.settings.get_enum("mouse-action-scroll-down");
         });
         this.settings.connect("changed::cache-art", () => {
@@ -499,7 +487,6 @@ export default class MediaControls extends Extension {
         const lyricXmlFile = Gio.File.new_for_uri(
             "resource:///org/gnome/shell/extensions/mediacontrols/dbus/lyricNode.xml",
         );
-
         const mprisResult = mprisXmlFile.load_contents_async(null);
         const watchResult = watchXmlFile.load_contents_async(null);
         const lyricResult = lyricXmlFile.load_contents_async(null);
@@ -509,13 +496,11 @@ export default class MediaControls extends Extension {
             errorLog("Failed to read xml files");
             return;
         }
-
         const mprisBytes = readResults[0];
         const watchBytes = readResults[1];
         const lyricBytes = readResults[2];
 
         const textDecoder = new TextDecoder();
-
         const watchNodeXml = textDecoder.decode(watchBytes[0]);
         const mprisNodeXml = textDecoder.decode(mprisBytes[0]);
         const lyricNodeXml = textDecoder.decode(lyricBytes[0]);
@@ -535,7 +520,6 @@ export default class MediaControls extends Extension {
         const mprisInterface = mprisNodeInfo.lookup_interface(MPRIS_IFACE_NAME);
         const mprisPlayerInterface = mprisNodeInfo.lookup_interface(MPRIS_PLAYER_IFACE_NAME);
         const propertiesInterface = mprisNodeInfo.lookup_interface(DBUS_PROPERTIES_IFACE_NAME);
-
         // @ts-expect-error
         const mprisInterfaceString = new GLib.String("");
         mprisInterface.generate_xml(4, mprisInterfaceString);
@@ -545,11 +529,9 @@ export default class MediaControls extends Extension {
         // @ts-expect-error
         const propertiesInterfaceString = new GLib.String("");
         propertiesInterface.generate_xml(4, propertiesInterfaceString);
-
         this.mprisIfaceInfo = mprisInterface;
         this.mprisPlayerIfaceInfo = mprisPlayerInterface;
         this.propertiesIfaceInfo = propertiesInterface;
-
         const initWatchSuccess = await this.initWatchProxy().catch(handleError);
         if (initWatchSuccess === false) {
             errorLog("Failed to init watch proxy");
@@ -570,7 +552,6 @@ export default class MediaControls extends Extension {
         if (this.watchProxy == null) {
             return false;
         }
-        // @ts-ignore
         this.watchProxy.connectSignal("NameOwnerChanged", (proxy, senderName, [busName, oldOwner, newOwner]) => {
             if (busName.startsWith(MPRIS_IFACE_NAME) === false) {
                 return;
@@ -686,7 +667,6 @@ export default class MediaControls extends Extension {
             });
             this.playerProxies.set(busName, [playerProxy, undefined]);
             this.panelBtn?.updateWidgets(WidgetFlags.MENU_PLAYERS);
-            this.setActivePlayer();
         } catch (e) {
             errorLog("Failed to add player:", busName, e);
         }
@@ -741,10 +721,20 @@ export default class MediaControls extends Extension {
                 }
             }
         }
+
         debugLog("Chosen player:", chosenPlayer[0]?.busName);
+        // @ts-ignore
+        const currentBusName = this.panelBtn?.playerProxy?.busName;
+
         if (chosenPlayer == null) {
-            this.removePanelButton();
+            if (currentBusName != null) {
+                debugLog("Chosen player: none");
+                this.removePanelButton();
+            }
         } else {
+            if (currentBusName !== this.chosenBusName) {
+                debugLog("Chosen player:", this.chosenBusName);
+            }
             if (this.panelBtn == null) {
                 this.addPanelButton(chosenPlayer[0].busName);
             } else {

@@ -17,6 +17,14 @@ export const LYRIC_OBJECT_PATH = "/org/gnome/Shell/TrayLyric";
 /** @typedef {Enum<typeof PlaybackStatus>} PlaybackStatus */
 /** @typedef {Enum<typeof WidgetFlags>} WidgetFlags */
 
+/** @typedef {Enum<typeof PanelElements>} PanelElements */
+/** @typedef {Enum<typeof LabelTypes>} LabelTypes */
+/** @typedef {Enum<typeof ExtensionPositions>} ExtensionPositions */
+/** @typedef {Enum<typeof MouseActions>} MouseActions */
+/** @typedef {Enum<typeof LoopStatus>} LoopStatus */
+/** @typedef {Enum<typeof PlaybackStatus>} PlaybackStatus */
+/** @typedef {Enum<typeof WidgetFlags>} WidgetFlags */
+
 export const PlaybackStatus = {
     PLAYING: "Playing",
     PAUSED: "Paused",

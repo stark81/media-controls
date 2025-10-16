@@ -42,6 +42,8 @@ export const getAppByIdAndEntry = (id, entry) => {
     const runningApps = appSystem.get_running();
     const idResults = Shell.AppSystem.search(id ?? "");
     const entryResults = Shell.AppSystem.search(entry ?? "");
+
+    // Try to find in running apps first
     if (entryResults?.length > 0) {
         const app = runningApps.find((app) => entryResults[0].includes(app.get_id()));
         if (app != null) {
@@ -54,6 +56,34 @@ export const getAppByIdAndEntry = (id, entry) => {
             return app;
         }
     }
+
+    // If not found in running apps, try to lookup by desktop file ID
+    if (entry) {
+        // Try with .desktop extension
+        let app = appSystem.lookup_app(`${entry}.desktop`);
+        if (app != null) {
+            return app;
+        }
+        // Try without extension in case it already has it
+        app = appSystem.lookup_app(entry);
+        if (app != null) {
+            return app;
+        }
+    }
+
+    if (id) {
+        // Try with .desktop extension
+        let app = appSystem.lookup_app(`${id}.desktop`);
+        if (app != null) {
+            return app;
+        }
+        // Try without extension
+        app = appSystem.lookup_app(id);
+        if (app != null) {
+            return app;
+        }
+    }
+
     return null;
 };
 
@@ -107,8 +137,8 @@ export const getImage = async (url) => {
                 errorLog(`Failed to load image: ${url}`);
                 return null;
             }
-            // @ts-expect-error Types are wrong
             const resultPromise = file.replace_contents_bytes_async(bytes, null, false, Gio.FileCreateFlags.NONE, null);
+            // @ts-ignore
             const result = await resultPromise.catch(handleError);
             if (result?.[0] === false) {
                 errorLog(`Failed to cache image: ${url}`);
@@ -135,7 +165,6 @@ export const getImage = async (url) => {
  * @returns {Promise<T>}
  */
 export const createDbusProxy = async (ifaceInfo, name, object) => {
-    // @ts-expect-error Types have not been promisified yet
     const proxy = Gio.DBusProxy.new(
         Gio.DBus.session,
         Gio.DBusProxyFlags.NONE,
@@ -145,5 +174,6 @@ export const createDbusProxy = async (ifaceInfo, name, object) => {
         ifaceInfo.name,
         null,
     );
+    // @ts-ignore
     return proxy;
 };
