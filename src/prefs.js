@@ -5,7 +5,7 @@ import Gio from "gi://Gio";
 import Gtk from "gi://Gtk";
 import GObject from "gi://GObject";
 import { ExtensionPreferences, gettext as _ } from "resource:///org/gnome/Shell/Extensions/js/extensions/prefs.js";
-
+ 
 import BlacklistedPlayersOrig from "./helpers/prefs/BlacklistedPlayers.js";
 import ElementListOrig from "./helpers/prefs/ElementList.js";
 import LabelListOrig from "./helpers/prefs/LabelList.js";
@@ -336,7 +336,7 @@ export default class MediaControlsPreferences extends ExtensionPreferences {
      * @returns {Promise<void>}
      */
     async clearCache() {
-        const cacheDir = GLib.build_pathv("/", [GLib.get_user_cache_dir(), "mediacontrols@cliffniff.github.com"]);
+        const cacheDir = GLib.build_pathv("/", [GLib.get_user_cache_dir(), "mediacontrols@stark81.github.com"]);
         if (GLib.file_test(cacheDir, GLib.FileTest.EXISTS)) {
             const folder = Gio.File.new_for_path(cacheDir);
             const success = await folder.trash_async(null, null).catch(errorLog);
@@ -353,7 +353,7 @@ export default class MediaControlsPreferences extends ExtensionPreferences {
      * @returns {Promise<number>}
      */
     async getCacheSize() {
-        const cacheDir = GLib.build_pathv("/", [GLib.get_user_cache_dir(), "mediacontrols@cliffniff.github.com"]);
+        const cacheDir = GLib.build_pathv("/", [GLib.get_user_cache_dir(), "mediacontrols@stark81.github.com"]);
         if (GLib.file_test(cacheDir, GLib.FileTest.EXISTS)) {
             const folder = Gio.File.new_for_path(cacheDir);
             const enumerator = await folder
@@ -365,6 +365,7 @@ export default class MediaControlsPreferences extends ExtensionPreferences {
             let size = 0;
             let retries = 0;
             while (true) {
+                // @ts-ignore
                 const fileInfos = await enumerator.next_files_async(10, null, null).catch(errorLog);
                 if (fileInfos == null) {
                     if (retries < 3) {
@@ -378,6 +379,7 @@ export default class MediaControlsPreferences extends ExtensionPreferences {
                     break;
                 }
                 for (const fileInfo of fileInfos) {
+                    // @ts-ignore
                     const file = enumerator.get_child(fileInfo);
                     const info = await file
                         .query_info_async("standard::size", Gio.FileQueryInfoFlags.NONE, 0, null)

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<interface domain="mediacontrols@cliffniff.github.com">
+<interface domain="mediacontrols@stark81.github.com">
   <requires lib="gtk" version="4.0"/>
   <object class="AdwPreferencesPage" id="page-general">
     <property name="title" translatable="yes">General</property>

@@ -70,6 +70,7 @@ class MenuSlider extends St.BoxLayout {
             xAlign: Clutter.ActorAlign.END,
         });
 
+        // @ts-ignore
         this.slider.connectObject(
             "drag-begin",
             () => {
@@ -114,6 +115,7 @@ class MenuSlider extends St.BoxLayout {
             }),
         });
 
+        // @ts-ignore
         this.transition.connectObject(
             "marker-reached",
             (_, name) => {
@@ -249,11 +251,15 @@ class MenuSlider extends St.BoxLayout {
      */
     onDestroy() {
         // Disconnect all signals connected with this as owner
+        // @ts-ignore
         if (this.slider && typeof this.slider.disconnectObject === "function") {
+            // @ts-ignore
             this.slider.disconnectObject(this);
         }
 
+        // @ts-ignore
         if (this.transition && typeof this.transition.disconnectObject === "function") {
+            // @ts-ignore
             this.transition.disconnectObject(this);
         }
 

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<interface domain="mediacontrols@cliffniff.github.com">
+<interface domain="mediacontrols@stark81.github.com">
   <requires lib="gtk" version="4.0"/>
   <template class="BlacklistedPlayers" parent="AdwPreferencesGroup">
     <property name="title" translatable="yes">Blacklist players</property>

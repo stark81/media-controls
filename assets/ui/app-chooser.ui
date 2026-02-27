@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<interface domain="mediacontrols@cliffniff.github.com">
+<interface domain="mediacontrols@stark81.github.com">
   <requires lib="gtk" version="4.0"/>
   <template class="AppChooser" parent="AdwWindow">
     <property name="title" translatable="yes">Select app to blacklist</property>

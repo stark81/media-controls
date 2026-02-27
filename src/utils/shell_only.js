@@ -99,7 +99,7 @@ export const getImage = async (url) => {
     const encoder = new TextEncoder();
     const urlBytes = encoder.encode(url);
     const encodedUrl = GLib.base64_encode(urlBytes);
-    const path = GLib.build_filenamev([GLib.get_user_cache_dir(), "mediacontrols@cliffniff.github.com", encodedUrl]);
+    const path = GLib.build_filenamev([GLib.get_user_cache_dir(), "mediacontrols@stark81.github.com", encodedUrl]);
     const exitCode = GLib.mkdir_with_parents(GLib.path_get_dirname(path), 493);
     if (exitCode === -1) {
         errorLog(`Failed to create cache directory: ${path}`);
@@ -112,6 +112,7 @@ export const getImage = async (url) => {
             errorLog(`Failed to load image from cache: ${encodedUrl}`);
             return null;
         }
+        // @ts-ignore
         return stream;
     } else {
         const uri = GLib.Uri.parse(url, GLib.UriFlags.NONE);
@@ -129,6 +130,7 @@ export const getImage = async (url) => {
                 errorLog(`Failed to load local image: ${encodedUrl}`);
                 return null;
             }
+            // @ts-ignore
             return stream;
         } else if (scheme === "http" || scheme === "https") {
             const session = new Soup.Session();
@@ -140,6 +142,7 @@ export const getImage = async (url) => {
             }
             // @ts-expect-error Types are wrong
             const resultPromise = file.replace_contents_bytes_async(bytes, null, false, Gio.FileCreateFlags.NONE, null);
+            // @ts-ignore
             const result = await resultPromise.catch(errorLog);
             if (result?.[0] === false) {
                 errorLog(`Failed to cache image: ${url}`);
@@ -150,6 +153,7 @@ export const getImage = async (url) => {
                 errorLog(`Failed to load cached image: ${url}`);
                 return null;
             }
+            // @ts-ignore
             return stream;
         } else {
             errorLog(`Invalid scheme: ${scheme}`);
@@ -166,7 +170,6 @@ export const getImage = async (url) => {
  * @returns {Promise<T>}
  */
 export const createDbusProxy = async (ifaceInfo, name, object) => {
-    // @ts-expect-error Types have not been promisified yet
     const proxy = Gio.DBusProxy.new(
         Gio.DBus.session,
         Gio.DBusProxyFlags.NONE,
@@ -176,5 +179,6 @@ export const createDbusProxy = async (ifaceInfo, name, object) => {
         ifaceInfo.name,
         null,
     );
+    // @ts-ignore
     return proxy;
 };

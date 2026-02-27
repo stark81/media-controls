@@ -51,7 +51,7 @@ function find_child_by_name(parent, name) {
 /** @extends PanelMenu.Button */
 class PanelButton extends PanelMenu.Button {
     /**
-     * @private
+     * @public
      * @type {PlayerProxy}
      */
     playerProxy;
@@ -161,13 +161,27 @@ class PanelButton extends PanelMenu.Button {
      */
     changeListenerIds;
 
+     /**
+     * @typedef {Object} LyricObj
+     * @property {string} content
+     * @property {number} time
+     * @property {string} sender
+    */
+
+     /**
+     * @private
+     * @type {LyricObj | null}
+    */
+    lyricObj;
+
     /**
-     * @param {PlayerProxy} playerProxy
+     * @param {[PlayerProxy, LyricObj | null]} playerProxyArray
      * @param {MediaControls} extension
      */
-    constructor(playerProxy, extension) {
+    constructor(playerProxyArray, extension) {
         super(0.5, "Media Controls", false);
-        this.playerProxy = playerProxy;
+        this.playerProxy = playerProxyArray[0];
+        this.lyricObj = playerProxyArray[1];
         this.extension = extension;
         this.changeListenerIds = new Map();
         this.doubleTapSourceId = null;
@@ -192,17 +206,28 @@ class PanelButton extends PanelMenu.Button {
 
     /**
      * @public
-     * @param {PlayerProxy} playerProxy
+     * @param {[PlayerProxy, LyricObj | null]} playerProxyArray
      * @returns {void}
      */
-    updateProxy(playerProxy) {
-        if (this.isSamePlayer(playerProxy) === false) {
-            debugLog(`Updating proxy to ${playerProxy.busName}`);
+    updateProxy(playerProxyArray) {
+        if (this.isSamePlayer(playerProxyArray[0]) === false) {
+            debugLog(`Updating proxy to ${playerProxyArray[0].busName}`);
             this.removeProxyListeners();
-            this.playerProxy = playerProxy;
+            this.playerProxy = playerProxyArray[0];
+            this.lyricObj = playerProxyArray[1];
             this.updateWidgets(WidgetFlags.ALL);
             this.addProxyListeners();
         }
+    }
+
+    /**
+     * @public
+     * @param {LyricObj} lyricObj
+     * @returns {void}
+    */
+    updateLyric(lyricObj) {
+        this.lyricObj = lyricObj;
+        this.updateWidgets(WidgetFlags.PANEL_LABEL);
     }
 
     /**
@@ -347,7 +372,9 @@ class PanelButton extends PanelMenu.Button {
                 reactive: true,
             });
 
+            // @ts-ignore
             if (typeof Clutter.ClickGesture !== "undefined") {
+                // @ts-ignore
                 const pinClickAction = new Clutter.ClickGesture();
                 pinClickAction.set_n_clicks_required(1);
                 if (pinClickAction.set_recognize_on_press) {
@@ -394,9 +421,9 @@ class PanelButton extends PanelMenu.Button {
         }
         for (let i = 0; i < players.length; i++) {
             const player = players[i];
-            const app = getAppByIdAndEntry(player.identity, player.desktopEntry);
-            const isSamePlayer = this.isSamePlayer(player);
-            const appName = app?.get_name() ?? (player.identity || _("Unknown player"));
+            const app = getAppByIdAndEntry(player[0].identity, player[0].desktopEntry);
+            const isSamePlayer = this.isSamePlayer(player[0]);
+            const appName = app?.get_name() ?? (player[0].identity || _("Unknown player"));
             const appIcon = app?.get_icon() ?? Gio.Icon.new_for_string("audio-x-generic-symbolic");
             if (isSamePlayer) {
                 this.menuPlayersTextBoxLabel.text = appName;
@@ -435,7 +462,9 @@ class PanelButton extends PanelMenu.Button {
                 if (isSamePlayer) {
                     icon.add_style_class_name("popup-menu-player-icons-icon-active");
                 } else {
+                    // @ts-ignore
                     if (typeof Clutter.ClickGesture !== "undefined") {
+                        // @ts-ignore
                         const clickAction = new Clutter.ClickGesture();
                         if (clickAction.set_recognize_on_press) {
                             clickAction.set_recognize_on_press(true);
@@ -498,8 +527,10 @@ class PanelButton extends PanelMenu.Button {
                     )
                     .catch(errorLog);
                 if (info != null) {
+                    // @ts-ignore
                     const path = info.get_attribute_byte_string(Gio.FILE_ATTRIBUTE_THUMBNAIL_PATH);
                     if (path == null) {
+                        // @ts-ignore
                         this.menuImage.gicon = info.get_icon();
                     } else {
                         const thumb = Gio.File.new_for_path(path);
@@ -514,8 +545,10 @@ class PanelButton extends PanelMenu.Button {
             const pixbufPromise = /** @type {any} */ (GdkPixbuf.Pixbuf.new_from_stream_async(stream, null));
             const pixbuf = await pixbufPromise.catch(errorLog);
             if (pixbuf != null) {
+                // @ts-ignore
                 const aspectRatio = pixbuf.width / pixbuf.height;
                 const height = width / aspectRatio;
+                // @ts-ignore
                 const [success, buffer] = pixbuf.save_to_bufferv("png", [], []);
                 if (success) {
                     const bytes = GLib.Bytes.new(buffer);
@@ -562,7 +595,11 @@ class PanelButton extends PanelMenu.Button {
         }
         const width = this.getMenuItemWidth();
         this.menuLabelTitle = new ScrollingLabel({
-            text: this.playerProxy.metadata["xesam:title"],
+            text: {
+                content: this.playerProxy.metadata["xesam:title"],
+                time: 0,
+                sender: null,
+            },
             isScrolling: this.extension.scrollLabels,
             initPaused: this.playerProxy.playbackStatus !== PlaybackStatus.PLAYING,
             width,
@@ -571,7 +608,11 @@ class PanelButton extends PanelMenu.Button {
         const artistText = this.playerProxy.metadata["xesam:artist"]?.join(", ") || _("Unknown artist");
         const albumText = this.playerProxy.metadata["xesam:album"] || "";
         this.menuLabelSubtitle = new ScrollingLabel({
-            text: albumText === "" ? artistText : `${artistText} / ${albumText}`,
+            text: {
+                content: albumText === "" ? artistText : `${artistText} / ${albumText}`,
+                time: 0,
+                sender: null,
+            },
             isScrolling: this.extension.scrollLabels,
             initPaused: this.playerProxy.playbackStatus !== PlaybackStatus.PLAYING,
             direction: Clutter.TimelineDirection.BACKWARD,
@@ -605,6 +646,7 @@ class PanelButton extends PanelMenu.Button {
         }
         if (position != null && length != null && length > 0) {
             this.menuSlider.setDisabled(false);
+            // @ts-ignore
             this.menuSlider.updateSlider(position, length, rate);
             if (this.playerProxy.playbackStatus === PlaybackStatus.PLAYING) {
                 this.menuSlider.resumeTransition();
@@ -708,7 +750,9 @@ class PanelButton extends PanelMenu.Button {
             ...options.menuProps.options,
         });
 
+        // @ts-ignore
         if (typeof Clutter.ClickGesture !== "undefined") {
+            // @ts-ignore
             const clickGesture = new Clutter.ClickGesture();
             clickGesture.set_n_clicks_required(1);
             if (clickGesture.set_recognize_on_press) {
@@ -763,8 +807,18 @@ class PanelButton extends PanelMenu.Button {
      * @returns {void}
      */
     addButtonLabel(index) {
+        let labelObj = this.lyricObj;
+        // @ts-ignore
+        if (!labelObj || labelObj.content === "") {
+            labelObj = {
+                content: `${this.getButtonLabelText()}`,
+                time: 0,
+                sender: null,
+            }
+        }
+
         const label = new ScrollingLabel({
-            text: this.getButtonLabelText(),
+            text: labelObj,
             width: this.extension.labelWidth,
             isFixedWidth: this.extension.isFixedLabelWidth,
             isScrolling: this.extension.scrollLabels,
@@ -892,7 +946,9 @@ class PanelButton extends PanelMenu.Button {
             reactive,
         });
 
+        // @ts-ignore
         if (typeof Clutter.ClickGesture !== "undefined") {
+            // @ts-ignore
             const clickAction = new Clutter.ClickGesture();
             clickAction.set_n_clicks_required(1);
             if (clickAction.set_recognize_on_press) {

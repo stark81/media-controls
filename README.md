@@ -10,7 +10,35 @@ Show controls and information of the currently playing media in the panel.
 - Popup with album art and a slider to control the playback
 - Scrolling animations
 - Blacklist players
+- Register a DBus service, receive lyric from clients, and show it
 
+---
+
+# How to use the lyric service ?
+-  ## DBus information
+    - busName = "org.gnome.Shell.TrayLyric"
+    - objectPath = "/org/gnome/Shell/TrayLyric"
+    - interfaceName = "org.gnome.Shell.TrayLyric"
+
+    - `UpdateLyric: (lrcObj: string) => void`: 
+        - Parameter: lrcObj, a JSON string in the following format:
+          ```json
+          {
+            "content": "lyric",
+            // Current lyric.If set to "", it will show the media title.
+
+            "time": "4.5", 
+            // Numeric type, in seconds, used to control the speed and duration
+            // of the lyric scrolling.
+            
+            "sender": "VutronMusic" 
+            // Part of your mpris player's name. For exmaple,if the name of your
+            // mpris player is ‘org.mpris.MediaPlayer2.VutronMusic’， the sender 
+            // should set to 'VutronMusic', or 'MediaPlayer2' or any part of the
+            // name, but an inaccurate name may cause the player and the lyrics 
+            // to not match correctly.
+          }
+          ```
 ---
 
 ## How to install

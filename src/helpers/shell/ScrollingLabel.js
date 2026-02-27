@@ -7,7 +7,7 @@ import { debugLog } from "../../utils/common.js";
 
 /**
  * @typedef {Object} ScrollingLabelParams
- * @property {string} text
+ * @property {LyricObj} text
  * @property {number} width
  * @property {Clutter.TimelineDirection} [direction]
  * @property {boolean} [isFixedWidth]
@@ -16,6 +16,13 @@ import { debugLog } from "../../utils/common.js";
  * @property {number} [scrollSpeed]
  * @property {number} [scrollPauseTime]
  */
+
+/**
+ * @typedef {Object} LyricObj
+ * @property {string} content
+ * @property {number} time
+ * @property {string} sender
+*/
 
 /** @extends St.ScrollView */
 class ScrollingLabel extends St.ScrollView {
@@ -75,6 +82,11 @@ class ScrollingLabel extends St.ScrollView {
      * @type {number}
      */
     scrollSpeed;
+    /**
+     * @private
+     * @type {number}
+    */
+    lyricTime;
 
     /**
      * @param {ScrollingLabelParams} params
@@ -93,7 +105,6 @@ class ScrollingLabel extends St.ScrollView {
             ...defaultParams,
             ...params,
         };
-        this.scrollPauseTime = scrollPauseTime;
         this.isScrolling = isScrolling;
         this.isFixedWidth = isFixedWidth;
         this.initPaused = initPaused;
@@ -109,11 +120,14 @@ class ScrollingLabel extends St.ScrollView {
             xExpand: true,
             yExpand: true,
         });
+        this.lyricTime = text.time;
         this.label = new St.Label({
-            text,
+            text: text.content,
             yAlign: Clutter.ActorAlign.CENTER,
             xAlign: Clutter.ActorAlign.START,
         });
+        const staticTime = (this.labelWidth / this.label.width) * this.lyricTime * 1000 * 0.6;
+        this.scrollPauseTime = text.time ? staticTime : scrollPauseTime;
         this.onShowChangedId = this.label.connect("show", this.onShowChanged.bind(this));
         this.box.add_child(this.label);
         this.add_child(this.box);
@@ -189,7 +203,7 @@ class ScrollingLabel extends St.ScrollView {
      */
     initScrolling() {
         const adjustment = this.get_hadjustment();
-        const origText = this.label.text + "     ";
+        const origText = this.label.text;
 
         // Clean up any existing handler first
         if (this.onAdjustmentChangedId != null) {
@@ -201,7 +215,7 @@ class ScrollingLabel extends St.ScrollView {
             "changed",
             this.onAdjustmentChanged.bind(this, adjustment, origText),
         );
-        this.label.text = `${origText} `;
+        this.label.text = `${origText}`;
         this.label.clutterText.ellipsize = Pango.EllipsizeMode.NONE;
     }
 
@@ -212,9 +226,8 @@ class ScrollingLabel extends St.ScrollView {
      * @returns {void}
      */
     onAdjustmentChanged(adjustment, origText) {
-        if (adjustment.upper <= adjustment.pageSize) {
-            return;
-        }
+        if (adjustment.upper <= adjustment.pageSize) return;
+
 
         // Check if we're on stage before creating animation
         if (!this.is_mapped() || this.get_stage() == null) {
@@ -258,7 +271,8 @@ class ScrollingLabel extends St.ScrollView {
         const final = new GObject.Value();
         final.init(GObject.TYPE_INT);
         final.set_int(adjustment.upper);
-        const duration = (adjustment.upper - adjustment.value) / this.scrollSpeed;
+
+        const duration = this.lyricTime ? this.lyricTime * 1000 - this.scrollPauseTime : (adjustment.upper - adjustment.value) / this.scrollSpeed;
         const pspec = adjustment.find_property("value");
         const interval = new Clutter.Interval({
             valueType: pspec.value_type,
@@ -273,7 +287,7 @@ class ScrollingLabel extends St.ScrollView {
             duration,
             interval,
         });
-        this.label.text = `${origText} ${origText}`;
+        this.label.text = this.lyricTime ? origText : `${origText} ${origText}`;
 
         // Disconnect the adjustment changed handler if it's still connected
         if (this.onAdjustmentChangedId != null) {

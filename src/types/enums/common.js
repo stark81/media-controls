@@ -6,6 +6,8 @@ export const DBUS_OBJECT_PATH = "/org/freedesktop/DBus";
 export const MPRIS_IFACE_NAME = "org.mpris.MediaPlayer2";
 export const DBUS_PROPERTIES_IFACE_NAME = "org.freedesktop.DBus.Properties";
 export const MPRIS_PLAYER_IFACE_NAME = "org.mpris.MediaPlayer2.Player";
+export const LYRIC_IFACE_NAME = "org.gnome.Shell.TrayLyric";
+export const LYRIC_OBJECT_PATH = "/org/gnome/Shell/TrayLyric";
 
 /** @typedef {Enum<typeof PanelElements>} PanelElements */
 /** @typedef {Enum<typeof LabelTypes>} LabelTypes */
