@@ -3,6 +3,8 @@ import GObject from "gi://GObject";
 import St from "gi://St";
 import * as Slider from "resource:///org/gnome/shell/ui/slider.js";
 
+import { verticalLayout } from "../../utils/shell_only.js";
+
 import { msToHHMMSS } from "../../utils/common.js";
 
 /** @extends St.BoxLayout */
@@ -55,7 +57,7 @@ class MenuSlider extends St.BoxLayout {
      *
      */
     constructor() {
-        super({ vertical: true });
+        super(verticalLayout());
         this.rate = 1.0;
         this.slider = new Slider.Slider(0);
         this.textBox = new St.BoxLayout();
