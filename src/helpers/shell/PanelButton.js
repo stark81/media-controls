@@ -20,7 +20,7 @@ import * as Config from 'resource:///org/gnome/shell/misc/config.js';
 import ScrollingLabel from "./ScrollingLabel.js";
 import MenuSlider from "./MenuSlider.js";
 import { debugLog, errorLog } from "../../utils/common.js";
-import { getAppByIdAndEntry, getImage } from "../../utils/shell_only.js";
+import { getAppByIdAndEntry, getImage, verticalLayout } from "../../utils/shell_only.js";
 import { ControlIconOptions } from "../../types/enums/shell_only.js";
 import {
     LabelTypes,
@@ -257,7 +257,7 @@ class PanelButton extends PanelMenu.Button {
                 style_class: "no-padding popup-menu-box",
                 activate: false,
             });
-            this.menuBox.set_vertical(true);
+            this.menuBox.set(verticalLayout());
             this.menuBox.remove_style_class_name("popup-menu-item");
             this.menuBox.remove_all_children();
         }
@@ -336,9 +336,7 @@ class PanelButton extends PanelMenu.Button {
      */
     addMenuPlayers() {
         if (this.menuPlayers == null) {
-            this.menuPlayers = new St.BoxLayout({
-                vertical: true,
-            });
+            this.menuPlayers = new St.BoxLayout(verticalLayout());
         }
         if (this.menuPlayersTextBox == null) {
             this.menuPlayersTextBox = new St.BoxLayout({
@@ -581,9 +579,7 @@ class PanelButton extends PanelMenu.Button {
      */
     addMenuLabels() {
         if (this.menuLabels == null) {
-            this.menuLabels = new St.BoxLayout({
-                vertical: true,
-            });
+            this.menuLabels = new St.BoxLayout(verticalLayout());
         }
         if (this.menuLabelTitle != null) {
             this.menuLabels.remove_child(this.menuLabelTitle);

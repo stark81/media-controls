@@ -1,8 +1,10 @@
 // Utils only used in the extension. Do not import this file in the preferences window because Shell is not available there.
 
+import Clutter from "gi://Clutter";
 import GLib from "gi://GLib";
 import Soup from "gi://Soup";
 import Shell from "gi://Shell";
+import St from "gi://St";
 import Gio from "gi://Gio";
 import { errorLog } from "./common.js";
 
@@ -182,3 +184,14 @@ export const createDbusProxy = async (ifaceInfo, name, object) => {
     // @ts-ignore
     return proxy;
 };
+
+/**
+ * St widgets lost their `vertical` boolean property in GNOME Shell 51, having
+ * been deprecated in GNOME Shell 48 in favour of Clutter's `orientation`
+ * property. Return whichever of the two the running shell understands, so the
+ * same call sites work on every supported shell version.
+ *
+ * @returns {{ orientation: Clutter.Orientation } | { vertical: true }}
+ */
+export const verticalLayout = () =>
+    "orientation" in St.BoxLayout.prototype ? { orientation: Clutter.Orientation.VERTICAL } : { vertical: true };
